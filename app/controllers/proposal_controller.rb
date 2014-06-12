@@ -4,7 +4,7 @@ class ProposalController < ApplicationController
   before_filter :verify_access, only: [:edit, :update, :destroy, :confirm, :restart]
 
   def setup
-    @person = current_user.person if current_user
+    @user = current_user if current_user
     #FIXME: @conference also comes from verify_user, but we need setup also in show
     # which can be accessed anonymusly
     @conference = Conference.find_by(short_title: params[:conference_id])
@@ -19,7 +19,7 @@ class ProposalController < ApplicationController
 
     begin
       if !organizer_or_admin?
-        @event = @person.events.find(params[:id])
+        @event = @user.events.find(params[:id])
       else
         @event = Event.find(params[:id])
       end
@@ -30,11 +30,11 @@ class ProposalController < ApplicationController
   end
 
   def index
-    @events = @person.proposals @conference
+    @events = @user.proposals @conference
   end
 
   def destroy
-    proposal = @person.events.find_by_id(params[:id])
+    proposal = @user.events.find_by_id(params[:id])
     if proposal
       proposal.withdraw
       proposal.save
@@ -62,13 +62,13 @@ class ProposalController < ApplicationController
 
   def update
     session[:return_to] ||= request.referer
-    submitter = params[:person]
+    submitter = params[:user]
 
-    params[:event].delete :people_attributes
-    params[:event].delete :person
+    params[:event].delete :users_attributes
+    params[:event].delete :user
 
-    if submitter[:public_name].blank?
-      redirect_to edit_conference_proposal_path(@conference.short_title, @event), :alert => "Your public name cannot be blank"
+    if submitter[:name].blank?
+      redirect_to edit_conference_proposal_path(@conference.short_title, @event), :alert => "Your name cannot be blank"
       return
     end
 
@@ -77,8 +77,8 @@ class ProposalController < ApplicationController
       return
     end
 
-    if submitter[:public_name] != @person.public_name || submitter[:biography] != @person.biography
-      @person.update_attributes(submitter)
+    if submitter[:name] != @user.name || submitter[:biography] != @user.biography
+      @user.update_attributes(submitter)
     end
 
     event = Event.find_by_id(params[:id])
@@ -92,17 +92,17 @@ class ProposalController < ApplicationController
   end
 
   def create
-    person = current_user.person
+    user = current_user
     session[:return_to] ||= request.referer
 
     event_params = params[:event]
-    submitter = params[:person]
-    params[:event].delete :person
+    submitter = params[:user]
+    params[:event].delete :user
 
     @event = Event.new(event_params)
     @event.conference = @conference
 
-    if submitter[:public_name].blank?
+    if submitter[:name].blank?
       flash[:error] = "Your public name cannot be blank."
       render :action => "new"
       return
@@ -115,13 +115,13 @@ class ProposalController < ApplicationController
     end
 
     # First, update the submitter's info, if they've changed anything
-    if submitter[:public_name] != person.public_name || submitter[:biography] != person.biography
-      person.update_attributes(submitter)
+    if submitter[:name] != user.name || submitter[:biography] != user.biography
+      user.update_attributes(submitter)
     end
 
-    @event.event_people.new(:person => person,
+    @event.event_users.new(:user => user,
                            :event_role => "submitter")
-    @event.event_people.new(:person => person,
+    @event.event_users.new(:user => user,
                            :event_role => "speaker")
 
     begin
@@ -129,14 +129,14 @@ class ProposalController < ApplicationController
     rescue Exception => e
       @url = conference_proposal_index_path(@conference.short_title)
       @event_types = @conference.event_types
-      @person = current_user.person
+      @user = current_user
 
       flash[:error] = "Could not submit proposal: #{e.message}"
       render :action => 'new'
       return
     end
 
-    registration = person.registrations.where(:conference_id => @conference.id).first
+    registration = user.registrations.where(:conference_id => @conference.id).first
     if registration.nil?
       redirect_to(register_conference_path(@conference.short_title), :notice => 'Event was successfully submitted. You probably want to register for the conference now!')
     else
