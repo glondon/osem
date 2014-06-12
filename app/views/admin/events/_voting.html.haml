@@ -28,7 +28,7 @@
       %b Your vote
     %td
       - @conference.call_for_papers.rating.times do |counter|
-        - voted = @event.voted?(@event, current_user.person)
+        - voted = @event.voted?(@event, current_user)
         - if voted && voted.rating == counter+1
           = link_to "", vote_admin_conference_event_path(@conference.short_title, @event, :rating => counter+1), :remote => true, :id =>"label#{counter+1}", :class => "myrating", :voted => true
         - else
@@ -37,14 +37,14 @@
 
   - if @ratings.length > 0
     - @ratings.each do |rate|
-      - unless rate.person_id == current_user.person.id
+      - unless rate.user_id == current_user.id
         %tr
           %td
             = rate.first_name
             = rate.last_name
           %td
             - @conference.call_for_papers.rating.times do |counter|
-              - voted = @event.voted?(@event, rate.person)
+              - voted = @event.voted?(@event, rate.user)
               - if voted && voted.rating == counter+1
                 = label_tag "label#{counter+1}", "", :class => "othersrating", :voted => true
                 = javascript_tag "$('label[voted=true]').prevAll().andSelf().addClass('bright');"
