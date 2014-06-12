@@ -676,7 +676,7 @@ class Conference < ActiveRecord::Base
 #     begin
 #       guid = SecureRandom.urlsafe_base64
 #     end # while User.where(:guid => guid).exists?
-#     self.guid = guid
+    self.guid = guid
   end
 
   ##
