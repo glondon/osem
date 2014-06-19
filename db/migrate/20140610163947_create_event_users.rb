@@ -18,6 +18,5 @@ class CreateEventUsers < ActiveRecord::Migration
       record.save!
     end
 
-    drop_table :event_people
   end
 end
