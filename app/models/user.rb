@@ -41,6 +41,7 @@ class User < ActiveRecord::Base
 
     if user.new_record?
       user.email = auth.info.email
+      user.name = auth.info.name
       user.password = Devise.friendly_token[0, 20]
       user.skip_confirmation!
     end
