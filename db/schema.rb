@@ -61,8 +61,8 @@ ActiveRecord::Schema.define(version: 20140618062623) do
     t.date     "start_date",                                      null: false
     t.date     "end_date",                                        null: false
     t.integer  "venue_id"
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
     t.date     "registration_start_date"
     t.date     "registration_end_date"
     t.string   "logo_file_name"
@@ -147,6 +147,16 @@ ActiveRecord::Schema.define(version: 20140618062623) do
     t.datetime "updated_at",                              null: false
   end
 
+  create_table "event_people", force: true do |t|
+    t.integer  "proposal_id"
+    t.integer  "person_id"
+    t.integer  "event_id"
+    t.string   "event_role",  default: "participant", null: false
+    t.string   "comment"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+  end
+
   create_table "event_types", force: true do |t|
     t.integer "conference_id"
     t.string  "title",                                 null: false
@@ -157,10 +167,9 @@ ActiveRecord::Schema.define(version: 20140618062623) do
   end
 
   create_table "event_users", force: true do |t|
-    t.integer  "proposal_id"
     t.integer  "user_id"
     t.integer  "event_id"
-    t.string   "event_role",  default: "participant", null: false
+    t.string   "event_role", default: "participant", null: false
     t.string   "comment"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -193,13 +202,11 @@ ActiveRecord::Schema.define(version: 20140618062623) do
     t.string   "media_type"
     t.boolean  "require_registration"
     t.integer  "difficulty_level_id"
-    t.integer  "max_participants"
   end
 
-  create_table "events_registrations", force: true do |t|
-    t.integer  "registration_id"
-    t.integer  "event_id"
-    t.datetime "created_at"
+  create_table "events_registrations", id: false, force: true do |t|
+    t.integer "registration_id"
+    t.integer "event_id"
   end
 
   create_table "lodgings", force: true do |t|
@@ -238,8 +245,13 @@ ActiveRecord::Schema.define(version: 20140618062623) do
     t.datetime "avatar_updated_at"
     t.text     "biography"
     t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
+    t.string   "irc_nickname"
+    t.text     "volunteer_experience"
+    t.string   "tshirt"
+    t.string   "mobile"
+    t.string   "languages"
   end
 
   create_table "photos", force: true do |t|
@@ -304,11 +316,6 @@ ActiveRecord::Schema.define(version: 20140618062623) do
   create_table "registrations_vchoices", id: false, force: true do |t|
     t.integer "registration_id"
     t.integer "vchoice_id"
-  end
-
-  create_table "registrations_vdaysvpositions", id: false, force: true do |t|
-    t.integer "registration_id"
-    t.integer "vdayvposition_id"
   end
 
   create_table "roles", force: true do |t|
@@ -432,11 +439,6 @@ ActiveRecord::Schema.define(version: 20140618062623) do
     t.datetime "updated_at",    null: false
   end
 
-  create_table "vdays_vpositions", force: true do |t|
-    t.integer "vday_id"
-    t.integer "vposition_id"
-  end
-
   create_table "venues", force: true do |t|
     t.string   "guid"
     t.text     "name",                       limit: 255
@@ -467,14 +469,9 @@ ActiveRecord::Schema.define(version: 20140618062623) do
 
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
 
-  create_table "volunteers", id: false, force: true do |t|
-    t.integer "registration_id"
-    t.integer "vchoice_id"
-  end
-
   create_table "votes", force: true do |t|
-    t.integer  "rating"
     t.integer  "event_id"
+    t.integer  "rating"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer  "user_id"
