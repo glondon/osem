@@ -26,7 +26,7 @@ class User < ActiveRecord::Base
 
   before_create :setup_role
 
-  validates :email, presence: true
+#   validates :email, presence: true
   validates :name, presence: true
 
   # Searches for user based on email. Returns found user or new user.
@@ -122,11 +122,4 @@ class User < ActiveRecord::Base
         errors.add(:abstract, "cannot have more than 150 words")
       end
     end
-
-#   private
-#   def create_person
-#     # TODO Search people for existing email address, add to their account
-#     build_person(email: email) if person.nil?
-#     true
-#   end
 end
