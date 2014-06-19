@@ -77,19 +77,22 @@ class User < ActiveRecord::Base
     user
   end
 
-  def popup_details
-    details = "<b>Sign-in Count</b><br>"
-    details += "#{self.sign_in_count}<br>"
-    details += "<b>Current Sign-in</b><br>"
-    details += "#{self.current_sign_in_at}<br>"
-    details += "<b>Last Sign-in</b><br>"
-    details += "#{self.last_sign_in_at}<br>"
-    details += "<b>Current Sign-in IP</b><br>"
-    details += "#{self.current_sign_in_ip}<br>"
-    details += "<b>Last Sign-in IP</b><br>"
-    details += "#{self.last_sign_in_ip}<br>"
-    details += "<b>Created at</b><br>"
-    details += "#{self.created_at}<br>"
+  def registered
+    registrations = self.registrations
+    if registrations.count == 0
+      'None'
+    else
+      registrations.map { |r| r.conference.title }.join ', '
+    end
+  end
+
+  def attended
+    registrations_attended = self.registrations.where(attended: true)
+    if registrations_attended.count == 0
+      'None'
+    else
+      registrations_attended.map { |r| r.conference.title }.join ', '
+    end
   end
 
   def confirmed?
