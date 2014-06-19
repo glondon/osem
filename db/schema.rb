@@ -15,8 +15,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
 
   create_table "answers", force: true do |t|
     t.string   "title"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "call_for_papers", force: true do |t|
@@ -24,8 +24,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.date     "end_date",                              null: false
     t.text     "description",                           null: false
     t.integer  "conference_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
     t.boolean  "schedule_changes",      default: false
     t.integer  "rating",                default: 3
     t.boolean  "schedule_public"
@@ -38,8 +38,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.integer  "commentable_id"
     t.string   "commentable_type"
     t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
     t.string   "subject"
     t.integer  "parent_id"
     t.integer  "lft"
@@ -61,8 +61,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.date     "start_date",                                      null: false
     t.date     "end_date",                                        null: false
     t.integer  "venue_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                      null: false
+    t.datetime "updated_at",                                      null: false
     t.date     "registration_start_date"
     t.date     "registration_end_date"
     t.string   "logo_file_name"
@@ -82,11 +82,11 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.text     "description"
     t.text     "registration_description"
     t.text     "ticket_description"
+    t.text     "sponsor_description"
+    t.string   "sponsor_email"
     t.string   "twitter_url"
     t.string   "facebook_url"
     t.string   "google_url"
-    t.text     "sponsor_description"
-    t.string   "sponsor_email"
     t.text     "lodging_description"
     t.boolean  "include_registrations_in_splash", default: false
     t.boolean  "include_sponsors_in_splash",      default: false
@@ -104,8 +104,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
   create_table "dietary_choices", force: true do |t|
     t.integer  "conference_id"
     t.string   "title",         null: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "difficulty_levels", force: true do |t|
@@ -113,8 +113,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.string   "title"
     t.text     "description"
     t.string   "color"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "email_settings", force: true do |t|
@@ -127,8 +127,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.text     "accepted_email_template"
     t.text     "rejected_email_template"
     t.text     "confirmed_email_template"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                            null: false
+    t.datetime "updated_at",                                            null: false
     t.string   "registration_subject"
     t.string   "accepted_subject"
     t.string   "rejected_subject"
@@ -143,8 +143,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.integer  "attachment_file_size"
     t.datetime "attachment_updated_at"
     t.boolean  "public",                  default: false
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
   end
 
   create_table "event_people", force: true do |t|
@@ -153,8 +153,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.integer  "event_id"
     t.string   "event_role",  default: "participant", null: false
     t.string   "comment"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
   create_table "event_types", force: true do |t|
@@ -164,6 +164,15 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.integer "minimum_abstract_length", default: 0
     t.integer "maximum_abstract_length", default: 500
     t.string  "color"
+  end
+
+  create_table "event_users", force: true do |t|
+    t.integer  "user_id"
+    t.integer  "event_id"
+    t.string   "event_role", default: "participant", null: false
+    t.string   "comment"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "events", force: true do |t|
@@ -187,8 +196,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.text     "proposal_additional_speakers"
     t.integer  "track_id"
     t.integer  "room_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
     t.string   "media_id"
     t.string   "media_type"
     t.boolean  "require_registration"
@@ -227,8 +236,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.datetime "avatar_updated_at"
     t.text     "biography"
     t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.string   "irc_nickname"
     t.text     "volunteer_experience"
     t.string   "tshirt"
@@ -248,8 +257,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
 
   create_table "question_types", force: true do |t|
     t.string   "title"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "questions", force: true do |t|
@@ -257,26 +266,26 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.integer  "question_type_id"
     t.integer  "conference_id"
     t.boolean  "global"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
 
   create_table "registrations", force: true do |t|
-    t.integer  "person_id"
     t.integer  "conference_id"
     t.boolean  "attending_social_events",     default: true
     t.boolean  "attending_with_partner",      default: false
     t.boolean  "using_affiliated_lodging",    default: false
     t.datetime "arrival"
     t.datetime "departure"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
     t.integer  "dietary_choice_id"
     t.text     "other_dietary_choice"
     t.boolean  "handicapped_access_required", default: false
     t.text     "other_special_needs"
     t.boolean  "attended",                    default: false
     t.boolean  "volunteer"
+    t.integer  "user_id"
   end
 
   create_table "registrations_social_events", id: false, force: true do |t|
@@ -291,8 +300,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
 
   create_table "roles", force: true do |t|
     t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "roles_users", id: false, force: true do |t|
@@ -361,8 +370,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.string   "name",          null: false
     t.text     "description"
     t.string   "color"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "users", force: true do |t|
@@ -380,8 +389,17 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
     t.string   "unconfirmed_email"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.string   "name"
+    t.boolean  "email_public"
+    t.string   "biography"
+    t.string   "nickname"
+    t.string   "affiliation"
+    t.string   "avatar_file_name"
+    t.string   "avatar_content_type"
+    t.integer  "avatar_file_size"
+    t.datetime "avatar_updated_at"
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
@@ -397,8 +415,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.integer  "conference_id"
     t.date     "day"
     t.text     "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
   create_table "venues", force: true do |t|
@@ -409,8 +427,8 @@ ActiveRecord::Schema.define(version: 20140617145048) do
     t.text     "description"
     t.string   "offline_map_url"
     t.string   "offline_map_bounds"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                             null: false
+    t.datetime "updated_at",                                             null: false
     t.string   "photo_file_name"
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
@@ -432,19 +450,19 @@ ActiveRecord::Schema.define(version: 20140617145048) do
   add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
 
   create_table "votes", force: true do |t|
-    t.integer  "person_id"
     t.integer  "event_id"
     t.integer  "rating"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer  "user_id"
   end
 
   create_table "vpositions", force: true do |t|
     t.integer  "conference_id"
     t.string   "title",         null: false
     t.text     "description"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
   end
 
 end
