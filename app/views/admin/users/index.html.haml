@@ -44,8 +44,6 @@
             %td
               = link_to "View", admin_user_path(user)
             %td
-              = user.roles.map { |role| role.name }.join ', '
-            %td
               .modal.fade{:id => "user-role-selection-#{user.id}", "role" => "dialog", "aria-hidden" => "true"}
                 .modal-dialog
                   .modal-content
@@ -67,16 +65,11 @@
                           %button{:class=> "btn btn-danger", "data-dismiss"=> "modal", "aria-hidden"=>"true"}
                             Cancel
                           = f.action :submit, :as => :button, :button_html => {:value => "Save", :class => "btn btn-primary"}
-              =link_to "Modify Roles", "#", "data-toggle" => "modal", "data-target" => "#user-role-selection-#{user.id}",id: "user-modify-role-#{user.id}"
-            %td
-              =link_to "Details", "javascript: void(0)", :class => "user-details-popover", "data-trigger" => "click", "data-placement" => "bottom",
-                "data-html" => "true",
-                "data-content" => user.popup_details,
-                "data-original-title" => ""
+              =link_to "#{user.roles.map { |role| role.name }.join ', '}", "#", "data-toggle" => "modal", "data-target" => "#user-role-selection-#{user.id}",id: "user-modify-role-#{user.id}"
             %td
               - if current_user.id == user.id or user.role_ids.include? 3
-                =link_to 'Delete',admin_user_path(user), :method => :delete , :data => {:confirm => 'Are you sure ?'}, :disabled => true,:class => "btn btn-primary disabled btn-danger",:role => "button" 
-              - else 
+                =link_to 'Delete',admin_user_path(user), :method => :delete , :data => {:confirm => 'Are you sure ?'}, :disabled => true,:class => "btn btn-primary disabled btn-danger",:role => "button"
+              - else
                 =link_to 'Delete',admin_user_path(user), :method=> :delete , :data=> {:confirm => 'Are you sure ?'},:class => "btn btn-primary btn-danger"
 
 
