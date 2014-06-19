@@ -1,0 +1,39 @@
+%table.table
+  %tr
+    %td
+      %b Name
+    %td
+      = @user.name
+  %tr
+    %td
+      %b Affiliation
+    %td
+      = @user.affiliation
+  %tr
+    %td
+      %b Email
+    %td
+      = @user.email
+  %tr
+    %td
+      %b Created At
+    %td
+      = @user.created_at
+  %tr
+    %td
+      %b Updated At
+    %td
+      = @user.updated_at
+  %tr
+    %td
+      %b Biography
+    %td
+      = @user.biography
+  %tr
+    %td
+      %b Registered to attend
+    %td
+      - if @user.registrations.count == 0
+        None
+      - else
+        = @user.registrations.map { |r| r.conference.title }.join ','
