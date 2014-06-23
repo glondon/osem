@@ -8,7 +8,7 @@ class User < ActiveRecord::Base
          :omniauthable, omniauth_providers: [:novell, :google, :facebook]
 
   has_and_belongs_to_many :roles
-  has_one :person, :inverse_of => :user
+  has_one :person, :inverse_of => :user, dependent: :destroy
   has_many :openids
 
   attr_accessible :email, :password, :password_confirmation, :remember_me, :role_id, :role_ids,
