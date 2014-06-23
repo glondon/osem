@@ -4,13 +4,13 @@ class Admin::SpeakersController < ApplicationController
 
   def edit
     @event = @conference.events.find(params[:event_id])
-    @speaker = @event.event_people.where(:event_role => "speaker").first
+    @speaker = @event.event_users.where(:event_role => "speaker").first
   end
 
   def update
     @event = @conference.events.find(params[:event_id])
-    @speaker = @event.event_people.where(:event_role => "speaker").first
-    @speaker.person_id = params[:speaker][:person_id]
+    @speaker = @event.event_users.where(:event_role => "speaker").first
+    @speaker.user_id = params[:speaker][:user_id]
     @speaker.save
     respond_with @speaker, :location => admin_conference_events_path(@conference.short_title)
   end

@@ -8,7 +8,7 @@ class Conference < ActiveRecord::Base
                   :start_date, :end_date, :rooms_attributes, :tracks_attributes, :dietary_choices_attributes,
                   :use_dietary_choices, :use_supporter_levels, :supporter_levels_attributes, :social_events_attributes,
                   :event_types_attributes, :registration_start_date, :registration_end_date, :logo,
-		              :questions_attributes, :question_ids, :answers_attributes, :answer_ids,
+                   :questions_attributes, :question_ids, :answers_attributes, :answer_ids,
                   :difficulty_levels_attributes, :use_difficulty_levels,
                   :use_vpositions, :use_vdays, :vdays_attributes, :vpositions_attributes, :use_volunteers,
                   :media_id, :media_type, :color, :description,
@@ -109,9 +109,8 @@ class Conference < ActiveRecord::Base
   # * +true+ - If the user isn't registered
   def user_registered? user
     return nil if user.nil?
-    return nil if user.person.nil?
 
-    if self.registrations.where(:person_id => user.person.id).count == 0
+    if self.registrations.where(:user_id => user.id).count == 0
       logger.debug("User #{user.email} isn't registered to self.title")
       return false
     else
@@ -298,28 +297,28 @@ class Conference < ActiveRecord::Base
   end
 
   ##
-  # Returns a hash with person => submissions ordered by submissions for all conferences
+  # Returns a hash with user => submissions ordered by submissions for all conferences
   #
   # ====Returns
-  # * +hash+ -> person: submissions
+  # * +hash+ -> user: submissions
   def self.get_top_submitter(limit = 5)
-    submitter = EventPerson.where('event_role = ?', 'submitter').limit(limit).group(:person_id)
+    submitter = EventUser.where('event_role = ?', 'submitter').limit(limit).group(:user_id)
     counter = submitter.count
-    calculate_person_submission_hash(submitter, counter)
+    calculate_user_submission_hash(submitter, counter)
   end
 
   ##
-  # Returns a hash with person => submissions ordered by submissions
+  # Returns a hash with user => submissions ordered by submissions
   #
   # ====Returns
-  # * +hash+ -> person: submissions
+  # * +hash+ -> user: submissions
   def get_top_submitter(limit = 5)
-    submitter = EventPerson.joins(:event).
+    submitter = EventUser.joins(:event).
         where('event_role = ? and conference_id = ?', 'submitter', id).
-        limit(limit).group(:person_id)
+        limit(limit).group(:user_id)
 
     counter = submitter.count
-    Conference.calculate_person_submission_hash(submitter, counter)
+    Conference.calculate_user_submission_hash(submitter, counter)
   end
 
   ##
@@ -654,11 +653,11 @@ class Conference < ActiveRecord::Base
   # Returns a hash with person => submissions ordered by submissions for all conferences
   #
   # ====Returns
-  # * +hash+ -> person: submissions
-  def self.calculate_person_submission_hash(submitter, counter)
+  # * +hash+ -> user: submissions
+  def self.calculate_user_submission_hash(submitter, counter)
     result = {}
     submitter.each do |s|
-      result[s.person] = counter[s.person_id]
+      result[s.user] = counter[s.user_id]
     end
     result
   end
@@ -683,9 +682,10 @@ class Conference < ActiveRecord::Base
   # Creates a UID for the conference. Used as before_create.
   #
   def generate_guid
-    begin
-      guid = SecureRandom.urlsafe_base64
-    end while Person.where(:guid => guid).exists?
+    guid = SecureRandom.urlsafe_base64
+#     begin
+#       guid = SecureRandom.urlsafe_base64
+#     end # while User.where(:guid => guid).exists?
     self.guid = guid
   end
 

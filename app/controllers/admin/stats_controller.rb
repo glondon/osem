@@ -1,8 +1,8 @@
 class Admin::StatsController < ApplicationController
   before_filter :verify_organizer
-  
+
   def index
-    @registrations = @conference.registrations.includes(:person).order("registrations.created_at ASC")
+    @registrations = @conference.registrations.includes(:user).order("registrations.created_at ASC")
     @registered = @conference.registrations.count
     @attendees = @conference.registrations.where("attended = ?", true).count
     @pre_registered = @conference.registrations.where("created_at < ?", @conference.start_date).count
@@ -43,7 +43,7 @@ class Admin::StatsController < ApplicationController
         @events_time = var_time(start_date, end_date, @events, "created_at")
       end
     end
-    
+
   #Code for the table in events
     @mystates = []
     @mytypes = []
@@ -62,7 +62,7 @@ class Admin::StatsController < ApplicationController
         @eventstats["#{mystate.name}"] = {"count" => events_mystate.count, "length" => length}
       end
     end
-    
+
     @conference.event_types.each do |mytype|
       events_mytype = @events.where("event_type_id" => mytype.id)
       if events_mytype.count > 0
@@ -87,11 +87,11 @@ class Admin::StatsController < ApplicationController
     end
     @eventstats["totallength"] = @totallength
 
-#SPEAKERS stats    
-    @speakers = Person.joins(:events).where("events.conference_id = ? AND events.state LIKE ?", @conference.id,  'confirmed').uniq
-    @speaker_fields_person = %w[name email affiliation]
+#SPEAKERS stats
+    @speakers = User.joins(:events).where("events.conference_id = ? AND events.state LIKE ?", @conference.id,  'confirmed').uniq
+    @speaker_fields_user = %w[name email affiliation]
     @speaker_fields_reg = %w[arrival departure]
-#TICKETS stats    
+#TICKETS stats
     @supporter_levels = @conference.supporter_levels
     @tickets = @conference.registrations.joins(:supporter_registration => :supporter_level)
     @tickets = @tickets.where("supporter_levels.title NOT LIKE ? ", "%Free%")
@@ -110,9 +110,9 @@ class Admin::StatsController < ApplicationController
       (start_date..end_date).each do |day|
         if @tickets.where("supporter_registrations.created_at LIKE ?", "%#{day}%").where("supporter_levels.title" => levels).count != 0
           @conference.supporter_levels.each do |level|
-  
+
             day_ticket_count = @tickets.where("supporter_registrations.created_at LIKE ? AND supporter_levels.title LIKE ?", "%#{day}%", "%#{level.title}%").count
-          
+
             index = @tickets_time.index {|v| v["key"] == "#{level.title}"}
             @tickets_time[index]["values"] << {"label" => "#{day}", "value" => day_ticket_count}      
           end  
@@ -141,34 +141,34 @@ class Admin::StatsController < ApplicationController
       end_date = @conference.end_date
       @registered_time = var_time(start_date, end_date, @registrations, "created_at")
     end
-    
+
     respond_to do |format|
       format.html
       format.json { render :json => @tickets_time.to_json }
     end
   end
-#FUNCTIONS   
+#FUNCTIONS
   def var_time(start_date, end_date, var, field)
     result = []
     (start_date..end_date).each do |day|
       day_var_count = var.where("#{field} LIKE ?", "%#{day}%").count
       if day_var_count !=0
-	result << {"status" => "#{day}", "value" => day_var_count}
+        result << {"status" => "#{day}", "value" => day_var_count}
       end
-    end    
+    end
     return result
   end
-  
+
   def var_state_func(vars, field, mystate)
     result = []
-    
+
     for myvar in vars do
       #Find events per track and state
       value = @conference.events.where("#{field}_id" => myvar.id).where(state: mystate).count
       #Find all events in that state
       total = @conference.events.where(state: mystate).count
       status = "#{myvar.name}"
-      
+
       if value != 0
         percent = (value.to_f / total * 100).round(2)
         result << {"status" => status, "value" => value, "percent" => percent}
@@ -183,12 +183,12 @@ class Admin::StatsController < ApplicationController
       percent = (value.to_f / total * 100).round(2)
       result << {"status" => "no #{field} set", "value" => value, "percent" => percent }
     end
-    
+
     return result
   end
-  
+
   def speaker_reg(speaker)
-    speaker.registrations.where("conference_id = ? AND person_id = ?", @conference.id, speaker.id).first
+    speaker.registrations.where("conference_id = ? AND user_id = ?", @conference.id, speaker.id).first
   end
 
   def speaker_diet(reg)
