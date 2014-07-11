@@ -1,33 +1,13 @@
 class ProposalController < ApplicationController
+  load_and_authorize_resource :conference, find_by: :short_title
+  load_and_authorize_resource :event, parent: false
   before_filter :verify_user, except: [:show]
   before_filter :setup
-  before_filter :verify_access, only: [:edit, :update, :destroy, :confirm, :restart]
 
   def setup
     @user = current_user if current_user
-    # FIXME: @conference also comes from verify_user, but we need setup also in show
-    # which can be accessed anonymusly
-    @conference = Conference.find_by(short_title: params[:conference_id])
     @url = conference_proposal_index_path(@conference.short_title)
     @event_types = @conference.event_types
-  end
-
-  def verify_access
-    if params.has_key? :proposal_id
-      params[:id] = params[:proposal_id]
-    end
-
-    begin
-      if !organizer_or_admin?
-        @event = @user.events.find(params[:id])
-      else
-        @event = Event.find(params[:id])
-      end
-    rescue Exception => e
-      Rails.logger.debug("Proposal failure in verify_access: #{e.message}")
-      redirect_to(conference_proposal_index_path(conference_id: @conference.short_title),
-                  alert: 'Invalid or uneditable proposal.')
-    end
   end
 
   def index
@@ -35,10 +15,9 @@ class ProposalController < ApplicationController
   end
 
   def destroy
-    proposal = @user.events.find_by_id(params[:id])
-    if proposal
-      proposal.withdraw
-      proposal.save
+    if @event
+      @event.withdraw
+      @event.save
       redirect_to(conference_proposal_index_path(conference_id: @conference.short_title),
                   alert: 'Proposal withdrawn.')
     else
@@ -85,12 +64,10 @@ class ProposalController < ApplicationController
       @user.update_attributes(submitter)
     end
 
-    event = Event.find_by_id(params[:id])
-
     begin
-      event.update_attributes!(params[:event])
+      @event.update_attributes!(params[:event])
       redirect_to(conference_proposal_index_path(conference_id: @conference.short_title),
-                  notice: "'#{event.title}' was successfully updated.")
+                  notice: "'#{@event.title}' was successfully updated.")
     rescue Exception => e
       redirect_to edit_conference_proposal_path(@conference.short_title, @event), alert: e.message
     end
@@ -154,7 +131,6 @@ class ProposalController < ApplicationController
   end
 
   def show
-    @event = Event.find(params[:id])
     @speaker = @event.speakers.first || @event.submitter
   end
 

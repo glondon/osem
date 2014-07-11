@@ -1,6 +1,7 @@
 module Admin
   class EventsController < ApplicationController
-    before_filter :verify_organizer
+    load_and_authorize_resource :conference, find_by: :short_title
+    load_and_authorize_resource :event, through: :conference
 
     # FIXME: The timezome should only be applied on output, otherwise
     # you get lost in timezone conversions...
@@ -11,6 +12,7 @@ module Admin
     end
 
     def index
+      @conference = Conference.find_by(short_title: params[:conference_id])
       @events = @conference.events
       @tracks = @conference.tracks
       @machine_states = @events.state_machine.states.map
@@ -71,7 +73,6 @@ module Admin
     end
 
     def show
-      @event = @conference.events.find(params[:id])
       @tracks = @conference.tracks
       @event_types = @conference.event_types
       @comments = @event.root_comments
@@ -81,7 +82,6 @@ module Admin
     end
 
     def edit
-      @event = @conference.events.find(params[:id])
       @event_types = @conference.event_types
       @tracks = Track.all
       @comments = @event.root_comments
@@ -102,7 +102,6 @@ module Admin
     end
 
     def update
-      @event = Event.find(params[:id])
       if params.has_key? :track_id
         @event.update_attribute(:track_id, params[:track_id])
       end
@@ -147,7 +146,6 @@ module Admin
     end
 
     def vote
-      @event = Event.find(params[:id])
       @ratings = @event.votes.includes(:user)
 
       if votes = current_user.votes.find_by_event_id(params[:id])
