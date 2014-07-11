@@ -20,8 +20,11 @@ gem 'omniauth-facebook'
 gem 'omniauth-openid'
 gem 'omniauth-google-oauth2'
 
+# Use rolify to set roles
+gem 'rolify'
+
 # Use cancan as authorization framework
-gem 'cancan'
+gem 'cancancan', '~> 1.8'
 
 # Use transitions as state machine
 gem 'transitions', :require => %w( transitions active_record/transitions )
