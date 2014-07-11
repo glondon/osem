@@ -8,9 +8,8 @@ describe Conference do
 
   describe '#get_top_submitter' do
     # It is necessary to use bang version of let to build roles before user
-    let!(:organizer_role) { create(:organizer_role) }
     let!(:participant_role) { create(:participant_role) }
-    let!(:admin_role) { create(:admin_role) }
+    let!(:organizer_role) { create(:organizer_role) }
 
     it 'calculates correct hash with top submitters' do
       event = create(:event, conference: subject)
@@ -41,7 +40,7 @@ describe Conference do
       target = build(:target, target_count: 10, unit: Target.units[:registrations])
       subject.targets = [target]
       result = {
-          "10 Registrations by #{target.due_date}" => '0'
+        "10 Registrations by #{target.due_date}" => '0'
       }
       expect(subject.get_targets(Target.units[:registrations])).to eq(result)
     end
@@ -51,7 +50,7 @@ describe Conference do
       subject.targets = [target]
       subject.registrations = [create(:registration)]
       result = {
-          "10 Registrations by #{target.due_date}" => '10'
+        "10 Registrations by #{target.due_date}" => '10'
       }
       expect(subject.get_targets(Target.units[:registrations])).to eq(result)
     end
@@ -64,7 +63,7 @@ describe Conference do
       target = build(:target, target_count: 10, unit: Target.units[:submissions])
       subject.targets = [target]
       result = {
-          "10 Submissions by #{target.due_date}" => '0'
+        "10 Submissions by #{target.due_date}" => '0'
       }
       expect(subject.get_targets(Target.units[:submissions])).to eq(result)
     end
@@ -74,7 +73,7 @@ describe Conference do
       subject.targets = [target]
       subject.events = [create(:event)]
       result = {
-          "10 Submissions by #{target.due_date}" => '10'
+        "10 Submissions by #{target.due_date}" => '10'
       }
       expect(subject.get_targets(Target.units[:submissions])).to eq(result)
     end
@@ -83,7 +82,7 @@ describe Conference do
       target = build(:target, target_count: 300, unit: Target.units[:program_minutes])
       subject.targets = [target]
       result = {
-          "300 Program minutes by #{target.due_date}" => '0'
+        "300 Program minutes by #{target.due_date}" => '0'
       }
       expect(subject.get_targets(Target.units[:program_minutes])).to eq(result)
     end
@@ -93,7 +92,7 @@ describe Conference do
       subject.targets = [target]
       subject.events = [create(:event)]
       result = {
-          "300 Program minutes by #{target.due_date}" => '10'
+        "300 Program minutes by #{target.due_date}" => '10'
       }
       expect(subject.get_targets(Target.units[:program_minutes])).to eq(result)
     end
@@ -630,9 +629,8 @@ describe Conference do
 
   describe 'self#event_distribution' do
     # It is necessary to use bang version of let to build roles before user
-    let!(:organizer_role) { create(:organizer_role) }
     let!(:participant_role) { create(:participant_role) }
-    let!(:admin_role) { create(:admin_role) }
+    let!(:organizer_role) { create(:organizer_role) }
 
     it 'self#event_distribution calculates correct values with user' do
       create(:user, last_sign_in_at: Time.now - 3.months) # active
@@ -1159,9 +1157,8 @@ describe Conference do
   describe '#user_registered?' do
 
     # It is necessary to use bang version of let to build roles before user
-    let!(:organizer_role) { create(:organizer_role) }
     let!(:participant_role) { create(:participant_role) }
-    let!(:admin_role) { create(:admin_role) }
+    let!(:organizer_role) { create(:organizer_role) }
 
     let(:user) { create(:user) }
 
