@@ -1,6 +1,7 @@
 module Users
   class OmniauthCallbacksController < Devise::OmniauthCallbacksController
     skip_before_filter :verify_authenticity_token
+    skip_authorization_check
 
     [:novell, :google, :facebook, :twitter].each do |provider|
       define_method(provider) { handle(provider) }
