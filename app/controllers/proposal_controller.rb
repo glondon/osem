@@ -32,7 +32,6 @@ class ProposalController < ApplicationController
 
   def edit
     @url = conference_proposal_path(@conference.short_title, params[:id])
-    @event_types = @conference.event_types
     @attachments = @event.event_attachments
 
     if @event.nil?
