@@ -120,7 +120,7 @@ class ProposalController < ApplicationController
     registration = user.registrations.where(conference_id: @conference.id).first
     ahoy.track 'Event submission', title: 'New submission'
     if registration.nil?
-      redirect_to(register_conference_path(@conference.short_title),
+      redirect_to(conference_register_path(@conference.short_title),
                   notice: 'Event was successfully submitted.\
                  You probably want to register for the conference now!')
     else
@@ -144,7 +144,7 @@ class ProposalController < ApplicationController
       end
 
       if !@conference.user_registered?(current_user)
-        redirect_to(register_conference_path(@conference.short_title),
+        redirect_to(conference_register_path(@conference.short_title),
                     notice: 'Event was confirmed. Please register to attend the conference.')
         return
       end
