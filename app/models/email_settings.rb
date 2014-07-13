@@ -13,7 +13,7 @@ class EmailSettings < ActiveRecord::Base
       'email' => user.email,
       'name' => user.name,
       'conference' => conference.title,
-      'registrationlink' => Rails.application.routes.url_helpers.register_conference_url(
+      'registrationlink' => Rails.application.routes.url_helpers.conference_register_url(
                             conference.short_title, host: CONFIG['url_for_emails'])
     }
 
