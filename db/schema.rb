@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20140714141156) do
+ActiveRecord::Schema.define(version: 20140718103856) do
 
   create_table "ahoy_events", force: true do |t|
     t.uuid     "visit_id"
@@ -449,6 +449,7 @@ ActiveRecord::Schema.define(version: 20140714141156) do
     t.string   "tshirt"
     t.string   "languages"
     t.text     "volunteer_experience"
+    t.boolean  "is_admin"
   end
 
   add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
