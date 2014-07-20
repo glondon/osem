@@ -6,20 +6,6 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 
-# Roles
-# Name: all lower case and no use of spaces, for easier management within the application
-Role.create(name: 'Participant')
-Role.create(name: 'Attendee')
-Role.create(name: 'Volunteer')
-Role.create(name: 'Speaker')
-Role.create(name: 'Sponsor')
-Role.create(name: 'Press')
-
-Role.create(name: 'Organizer')
-Role.create(name: 'CfP')
-Role.create(name: 'Info Desk')
-Role.create(name: 'Volunteer Coordinator')
-
 # Questions
 qtype_yesno = QuestionType.create(title: 'Yes/No')
 qtype_single = QuestionType.create(title: 'Single Choice')
