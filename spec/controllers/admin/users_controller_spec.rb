@@ -37,12 +37,25 @@ describe Admin::UsersController do
       end
     end
   end
-  describe 'DELETE #destroy' do 
+  describe 'DELETE #destroy' do
     before :each do
       @user = create(:user)
+      @event = create(:event)
+      @user_event = @event.submitter
+
+#       @event_scheduled = create(:event)
+#       @user_event_scheduled = @event_scheduled.submitter
+#       @user_event_scheduled_name = @user_event_scheduled.name
+
+      @voter = create(:user)
+      create(:vote, user: @voter, event: @event)
+      @event2 = create(:event)
+      @voter_with_events = @event2.submitter
+      create(:vote, user: @voter_with_events, event: @event)
     end
+
     context 'valid attributes' do
-      it 'it deletes the contact' do
+      it 'it deletes the contact' do ###
         expect { delete :destroy, id: @user.id }.to change(User, :count).by(-1)
       end
       it 'redirects to users#index' do
@@ -50,6 +63,31 @@ describe Admin::UsersController do
         expect(response).to redirect_to admin_users_path
       end
     end
-  end
 
+    context 'deletes users' do
+      it 'when user does not have events' do
+        expect { delete :destroy, id: @user.id }.to change(User, :count).by(-1)
+      end
+
+      it 'when user has unscheduled events' do
+        expect { delete :destroy, id: @user_event.id }.to change(User, :count).by(-1)
+      end
+    end
+
+    context 'does not delete users' do
+      let(:event_scheduled) { create(:event, start_time: Time.now) }
+      let(:user_event_scheduled) { event_scheduled.submitter }
+
+      it 'when user has voted on proposals' do
+        expect { delete :destroy, id: @voter.id }.to change(User, :count).by(0)
+        expect { delete :destroy, id: @voter_with_events.id}.to change(User, :count).by(0)
+      end
+
+      it 'when user has scheduled events' do
+        name = user_event_scheduled.name
+        expect { delete :destroy, id: user_event_scheduled.id }.to change(User, :count).by(0)
+#         expect { delete :destroy, id: user_event_scheduled.id }.to change{user_event_scheduled.name}.from(name).to('User deleted')
+      end
+    end
+  end
 end
