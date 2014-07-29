@@ -42,11 +42,8 @@ describe Admin::UsersController do
       @user = create(:user)
       @event = create(:event)
       @user_event = @event.submitter
-
-#       @event_scheduled = create(:event)
-#       @user_event_scheduled = @event_scheduled.submitter
-#       @user_event_scheduled_name = @user_event_scheduled.name
-
+      @event_scheduled = create(:event, start_time: Time.now)
+      @user_event_scheduled = @event_scheduled.submitter
       @voter = create(:user)
       create(:vote, user: @voter, event: @event)
       @event2 = create(:event)
@@ -75,18 +72,14 @@ describe Admin::UsersController do
     end
 
     context 'does not delete users' do
-      let(:event_scheduled) { create(:event, start_time: Time.now) }
-      let(:user_event_scheduled) { event_scheduled.submitter }
-
       it 'when user has voted on proposals' do
         expect { delete :destroy, id: @voter.id }.to change(User, :count).by(0)
         expect { delete :destroy, id: @voter_with_events.id}.to change(User, :count).by(0)
       end
 
       it 'when user has scheduled events' do
-        name = user_event_scheduled.name
-        expect { delete :destroy, id: user_event_scheduled.id }.to change(User, :count).by(0)
-#         expect { delete :destroy, id: user_event_scheduled.id }.to change{user_event_scheduled.name}.from(name).to('User deleted')
+        expect { delete :destroy, id: @user_event_scheduled.id }.to change(User, :count).by(0)
+        expect(@user_event_scheduled.reload.name).to eq('User deleted')
       end
     end
   end

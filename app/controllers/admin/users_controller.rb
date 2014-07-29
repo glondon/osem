@@ -51,16 +51,18 @@ module Admin
 
       if remove_user
         if @user.destroy
+          flash[:success] = "Account for #{@user.name} deleted."
           redirect_to admin_users_path
         else
-          redirect_to root_path
+          flash[:alert] = "Account for #{@user.name} could not be deleted."
+          redirect_to admin_users_path
         end
       else
         remove_user_info
         if @user.save!
-          redirect_to admin_users_path
+          redirect_to admin_users_path(success: "Account for #{@user.name} deleted. The user had scheduled events.")
         else
-          redirect_to root_path
+          redirect_to admin_users_path(alert: "Account for #{@user.name} could not be deleted.1")
         end
       end
     end
