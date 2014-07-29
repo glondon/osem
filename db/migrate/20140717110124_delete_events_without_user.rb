@@ -3,7 +3,7 @@ class DeleteEventsWithoutUser < ActiveRecord::Migration
     # User deletion without all the proper dependent: :destroy options might have left
     # Events without a submitter (event_user association is deleted, but Event itslef is not)
     Event.all.each do |event|
-      if event.users.blank?
+      if event.submitter.blank? || event.speakers.first.blank?
         if event.start_time.present? # If event is scheduled
 
           # Create dummy user
