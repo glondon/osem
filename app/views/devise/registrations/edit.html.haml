@@ -33,3 +33,5 @@
         = f.input :current_password, input_html: {autocomplete: 'off'},
           hint: '(we need your current password to confirm password or email changes)'
       = f.action :submit, as: :button, label: 'Update', button_html: {class: 'btn btn-primary'}
+      .pull-right
+        = link_to 'Delete Account', user_registration_path(resource), method: :delete, class: 'btn btn-danger', data: { confirm: 'Are you sure?' }
