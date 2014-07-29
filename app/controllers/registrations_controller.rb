@@ -54,7 +54,55 @@ class RegistrationsController < Devise::RegistrationsController
     end
   end
 
+  def destroy
+    @user = current_user
+    remove_user = true
+
+    # Delete events that are not schedule.
+    # No reason to keep records of unconfirmed events that will never be confirmed because they lack a submitter/speaker
+    @user.events.each do |event|
+      if event.start_time.present?
+        remove_user = false
+      else
+        event.destroy
+      end
+    end
+
+    if @user.votes.present?
+      remove_user = false
+    end
+
+    if remove_user
+      if @user.destroy
+        sign_out @user
+        redirect_to root_path(success: "Account for #{user.name} deleted.")
+      else
+        redirect_to edit_user_registration_path(@user, alert: 'Account could not be deleted!')
+      end
+    else
+      remove_user_info
+      if @user.save!
+        sign_out @user
+        redirect_to root_path(success: "Account for #{user.name} deleted.")
+      else
+        redirect_to edit_user_registration_path(@user, alert: 'Account could not be deleted!')
+      end
+    end
+  end
+
   protected
+  def remove_user_info
+    user_deleted = User.new(name: 'User deleted', email: "deleted@localhost.#{@user.id}",
+                            biography: 'Data is no longer available for deleted user.',
+                            password: Devise.friendly_token[0, 20])
+    user_deleted.skip_confirmation!
+
+    @user.attribute_names.each do |attr|
+      unless attr == 'id' || attr == 'created_at'
+        @user.update_column(:"#{attr}", user_deleted.send(attr))
+      end
+    end
+  end
 
   def after_update_path_for(resource)
     edit_user_registration_path(resource)

@@ -33,8 +33,50 @@ module Admin
 
     def destroy
       @user = User.find(params[:id])
-      @user.destroy
-      redirect_to admin_users_path, notice: 'User got deleted'
+
+      remove_user = true
+
+      # Delete events that are not schedule.
+      @user.events.each do |event|
+        if event.start_time.present?
+          remove_user = false
+        else
+          event.destroy
+        end
+      end
+
+      if @user.votes.present?
+        remove_user = false
+      end
+
+      if remove_user
+        if @user.destroy
+          redirect_to admin_users_path
+        else
+          redirect_to root_path
+        end
+      else
+        remove_user_info
+        if @user.save!
+          redirect_to admin_users_path
+        else
+          redirect_to root_path
+        end
+      end
+    end
+
+    private
+    def remove_user_info
+      user_deleted = User.new(name: 'User deleted', email: "deleted@localhost.#{@user.id}",
+                              biography: 'Data is no longer available for deleted user.',
+                              password: Devise.friendly_token[0, 20])
+      user_deleted.skip_confirmation!
+
+      @user.attribute_names.each do |attr|
+        unless attr == 'id' || attr == 'created_at'
+          @user.update_column(:"#{attr}", user_deleted.send(attr))
+        end
+      end
     end
   end
 end
