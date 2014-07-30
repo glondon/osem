@@ -7,7 +7,7 @@ class DeleteEventsWithoutUser < ActiveRecord::Migration
         if event.start_time.present? # If event is scheduled
 
           # Create dummy user
-          unless (user = User.find_by(email: 'deleted@localhost.com'))
+          unless (user = User.find_by(email: 'deleted@localhost.osem'))
             user = User.new(email: 'deleted@localhost.com', name: 'User deleted',
                                 biography: 'Data is no longer available for deleted user.',
                                 password: Devise.friendly_token[0, 20])
