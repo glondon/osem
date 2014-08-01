@@ -69,16 +69,14 @@ module Admin
 
     private
     def remove_user_info
-      user_deleted = User.new(name: 'User deleted', email: "deleted@localhost.#{@user.id}",
-                              biography: 'Data is no longer available for deleted user.',
-                              password: Devise.friendly_token[0, 20])
-      user_deleted.skip_confirmation!
+      @user.nullify
+      @user.name = 'User deleted'
+      @user.email = "deleted@localhost.#{@user.id}"
+      @user.biography = 'Data is no longer available for deleted user.'
+      @user.password = Devise.friendly_token[0, 20]
+      @user.skip_reconfirmation!
 
-      @user.attribute_names.each do |attr|
-        unless attr == 'id' || attr == 'created_at'
-          @user.update_column(:"#{attr}", user_deleted.send(attr))
-        end
-      end
+      # If user is unconfirmed, if is admin
     end
   end
 end

@@ -46,6 +46,11 @@ class User < ActiveRecord::Base
     user
   end
 
+  def nullify
+    exclude_fields = %{id created_at updated_at confirmed_at}
+    attribute_names.reject { |attr| exclude_fields.include?(attr) }.each { |attr| self[attr] = nil }
+  end
+
   def role?(role)
     Rails.logger.debug('Checking role in user')
     !!roles.find_by_name(role.to_s.downcase.camelize)
