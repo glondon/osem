@@ -30,7 +30,6 @@ module Admin
     # GET questions/1/edit
     def edit
       @question = Question.find(params[:id])
-
       if @question.global == true && !(current_user.has_role? :organizer, @conference)
         redirect_to(admin_conference_questions_path(:conference_id => @conference.short_title), :alert => "Sorry, you cannot edit global questions. Create a new one.")
       end

@@ -23,8 +23,8 @@ gem 'omniauth-google-oauth2'
 # Use rolify to set roles
 gem 'rolify'
 
-# Use cancan as authorization framework
-gem 'cancancan', '~> 1.8'
+# Use cancancan as authorization framework
+gem 'cancancan'
 
 # Use transitions as state machine
 gem 'transitions', :require => %w( transitions active_record/transitions )
@@ -94,6 +94,7 @@ gem 'rdoc-generator-fivefish'
 # We use factory_girl for seeds
 gem 'factory_girl_rails'
 
+gem 'delayed_job_active_record'
 # We use ahoy for visitor tracking
 gem 'ahoy_matey'
 gem 'activeuuid'
@@ -130,4 +131,9 @@ group :test do
   gem 'shoulda'
   # Extracted from RSpec 3 stub_model and mock_model
   gem 'rspec-activemodel-mocks'
+  gem 'timecop'
+end
+
+group :development, :test do
+  gem 'byebug'
 end

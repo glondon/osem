@@ -67,7 +67,7 @@ class ConferenceRegistrationController < ApplicationController
       else
         registration.update_attributes!(registration_params)
       end
-    rescue Exception => e
+    rescue => e
       Rails.logger.debug e.backtrace.join('\n')
       redirect_to(conference_register_path(conference_id: @conference.short_title),
                   alert: 'Registration failed:' + e.message)
@@ -80,8 +80,8 @@ class ConferenceRegistrationController < ApplicationController
     else
       # Track ahoy event
       ahoy.track 'Registered', title: 'New registration'
-      if @conference.email_settings.send_on_registration?
-        Mailbot.registration_mail(@conference, current_user).deliver
+      if conference.email_settings.send_on_registration?
+        Mailbot.delay.registration_mail(conference, current_user)
       end
     end
     redirect_to(conference_register_path(conference_id: @conference.short_title),

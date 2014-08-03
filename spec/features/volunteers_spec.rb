@@ -7,7 +7,7 @@ feature Conference do
   let(:organizer) { create(:organizer_conference_1) }
   let(:conference) { create(:conference) }
 
-  shared_examples 'volunteer' do |_user|
+#   shared_examples 'volunteer' do
     scenario 'adds and updates vdays', feature: true, js: true do
       sign_in(organizer)
       visit admin_conference_volunteers_info_path(
@@ -17,17 +17,17 @@ feature Conference do
       click_link 'Add vday'
       expect(page.all('div.nested-fields').count == 1).to be true
       page.
-      find('div.nested-fields:nth-of-type(1) select:nth-of-type(1)').
-      set("#{Date.today.strftime('%Y')}")
+        find('div.nested-fields:nth-of-type(1) select:nth-of-type(1)').
+        select("#{Date.today.strftime('%Y')}")
       page.
-      find('div.nested-fields:nth-of-type(1) select:nth-of-type(2)').
-      set("#{Date.today.strftime('%B')}")
+        find('div.nested-fields:nth-of-type(1) select:nth-of-type(2)').
+          select("#{Date.today.strftime('%B')}")
       page.
-      find('div.nested-fields:nth-of-type(1) select:nth-of-type(3)').
-      set("#{Date.today.strftime('%-d')}")
+        find('div.nested-fields:nth-of-type(1) select:nth-of-type(3)').
+          select("#{Date.today.strftime('%-d')}")
       page.
-      find('div.nested-fields:nth-of-type(1) div:nth-of-type(1) textarea').
-      set('Example Person')
+        find('div.nested-fields:nth-of-type(1) div:nth-of-type(1) textarea').
+          set('Example Person')
       click_button 'Update Conference'
       expect(flash).
       to eq('Volunteering options were successfully updated.')
@@ -63,17 +63,17 @@ feature Conference do
       click_link 'Add vday'
       expect(page.all('div.nested-fields').count == 1).to be true
       page.
-      find('div.nested-fields:nth-of-type(1) select:nth-of-type(1)').
-      set("#{Date.today.strftime('%Y')}")
+        find('div.nested-fields:nth-of-type(1) select:nth-of-type(1)').
+          select("#{Date.today.strftime('%Y')}")
       page.
-      find('div.nested-fields:nth-of-type(1) select:nth-of-type(2)').
-      set("#{Date.today.strftime('%B')}")
+        find('div.nested-fields:nth-of-type(1) select:nth-of-type(2)').
+        select("#{Date.today.strftime('%B')}")
       page.
-      find('div.nested-fields:nth-of-type(1) select:nth-of-type(3)').
-      set("#{Date.today.strftime('%-d')}")
+        find('div.nested-fields:nth-of-type(1) select:nth-of-type(3)').
+        select("#{Date.today.strftime('%-d')}")
       page.
-      find('div.nested-fields:nth-of-type(1) div:nth-of-type(1) textarea').
-      set('Example Person')
+        find('div.nested-fields:nth-of-type(1) div:nth-of-type(1) textarea').
+        set('Example Person')
       click_button 'Update Conference'
       expect(flash).
       to eq('Volunteering options were successfully updated.')

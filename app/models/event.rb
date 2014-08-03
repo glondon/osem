@@ -31,10 +31,11 @@ class Event < ActiveRecord::Base
 
   validate :abstract_limit
   validate :before_end_of_conference
-  validate :biography_exists
+  validate :name_and_biography_exists
   validates :title, presence: true
   validates :abstract, presence: true
   validates :event_type, presence: true
+  validates :conference, presence: true
   validates :media_type, inclusion: { in: Conference.media_types.values }, allow_blank: true
 
   scope :confirmed, -> { where(state: 'confirmed') }
@@ -125,26 +126,32 @@ class Event < ActiveRecord::Base
   end
 
   def process_confirmation
-    if conference.email_settings.send_on_confirmed_without_registration?
+    if conference.email_settings.send_on_confirmed_without_registration? &&
+        conference.email_settings.confirmed_email_template &&
+        conference.email_settings.confirmed_without_registration_subject
       if conference.registrations.where(user_id: submitter.id).first.nil?
-        Mailbot.confirm_reminder_mail(self).deliver
+        Mailbot.delay.confirm_reminder_mail(self)
       end
     end
   end
 
   def process_acceptance(options)
     if conference.email_settings.send_on_accepted &&
-        options[:send_mail].blank?
+        conference.email_settings.accepted_email_template &&
+        conference.email_settings.accepted_subject &&
+        !options[:send_mail].blank?
       Rails.logger.debug 'Sending event acceptance mail'
-      Mailbot.acceptance_mail(self).deliver
+      Mailbot.delay.acceptance_mail(self)
     end
   end
 
   def process_rejection(options)
     if conference.email_settings.send_on_rejected &&
-        options[:send_mail].blank?
+        conference.email_settings.rejected_email_template &&
+        conference.email_settings.rejected_subject &&
+        !options[:send_mail].blank?
       Rails.logger.debug 'Sending rejected mail'
-      Mailbot.rejection_mail(self).deliver
+      Mailbot.delay.rejection_mail(self)
     end
   end
 
@@ -180,6 +187,25 @@ class Event < ActiveRecord::Base
     result
   end
 
+  def update_state(transition, mail = false, subject = false, send_mail = false, send_mail_param)
+    alert = ''
+    if mail && send_mail_param && subject && send_mail
+      alert = 'Update Email Subject before Sending Mails'
+    end
+      begin
+        if mail
+          self.send(transition,
+                    send_mail: send_mail_param)
+        else
+          self.send(transition)
+        end
+        self.save
+      rescue Transitions::InvalidTransition => e
+        alert = "Update state failed. #{e.message}"
+      end
+    alert
+  end
+
   private
 
   def abstract_limit
@@ -193,15 +219,20 @@ class Event < ActiveRecord::Base
     errors.add(:abstract, "cannot have more than #{max_words} words") if len > max_words
   end
 
-  def biography_exists
-    errors.add(:user_biography, 'must be filled out') if submitter.biography_word_count == 0
+  def name_and_biography_exists
+    errors.add(:biography, "cant' be blank") if submitter.biography.blank?
+    errors.add(:username, " can't be blank") if submitter.name.blank?
   end
 
+  # TODO: create a module to be mixed into model to perform same operation
+  # venue.rb has same functionality which can be shared
+  # TODO: rename guid to UUID as guid is specifically Microsoft term
   def generate_guid
-    begin
-      guid = SecureRandom.urlsafe_base64
-    end while self.class.where(guid: guid).exists?
-    self.guid = guid
+    loop do
+      @guid = SecureRandom.urlsafe_base64
+      break if !self.class.where(guid: guid).any?
+    end
+    self.guid = @guid
   end
 
   def set_week

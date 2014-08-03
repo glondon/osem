@@ -27,7 +27,6 @@ module Admin
         flash[:error] = "Difficulty Levels update failed."
         redirect_to(admin_conference_difficulty_levels_path(:conference_id => @conference.short_title))
       end
-
     end
   end
 end

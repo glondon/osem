@@ -11,7 +11,6 @@ feature Event do
 
       organizer = create(:organizer_conference_1, email: 'admin@example.com')
       participant = create(:participant, email: 'participant@example.com')
-
       expected_count = Event.count + 1
       conference = create(:conference)
       conference.call_for_papers = create(:call_for_papers)
@@ -36,10 +35,14 @@ feature Event do
       fill_in 'event_media_id', with: '123456'
 
       fill_in 'user_biography', with: 'Lorem ipsum biography'
-      fill_in 'user_name', with: 'Example User'
 
+<<<<<<< HEAD
       click_button 'Submit Session'
       expect(current_path).to eq(conference_register_path(conference.short_title))
+=======
+      click_button 'Create Event'
+      expect(current_path).to eq(register_conference_path(conference.short_title))
+>>>>>>> opensuse/master
 
       expect(Event.count).to eq(expected_count)
 
@@ -76,7 +79,7 @@ feature Event do
       expect(page.has_content?('Unconfirmed')).to be true
       click_link "confirm_proposal_#{event.id}"
       expect(flash).
-          to eq('Event was confirmed. Please register to attend the conference.')
+          to eq('The proposal was confirmed. Please register to attend the conference.')
 
       # Register for conference
       find('#register').click
@@ -86,7 +89,7 @@ feature Event do
       visit conference_proposal_index_path(conference.short_title)
       expect(page.has_content?('Confirmed')).to be true
       click_link "delete_proposal_#{event.id}"
-      expect(flash).to eq('Proposal withdrawn.')
+      expect(flash).to eq('Proposal was successfully withdrawn.')
     end
   end
 

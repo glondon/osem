@@ -9,10 +9,13 @@
     %tr
       %td
         = hidden_field_tag "conference[question_ids][]", nil
-        = check_box_tag "conference[question_ids][]", q.id, @conference.question_ids.include?(q.id), id: dom_id(q)
+        = check_box_tag "conference[question_ids][]", q.id,
+                        @conference.question_ids.include?(q.id), id: dom_id(q)
       %td
         = label_tag dom_id(q), q.title
+        %br
         = label_tag dom_id(q), "Type: #{q.question_type.title}"
+        = ','
         = label_tag dom_id(q), "Answers: #{q.answers.map {|a| a.title}.join(', ')}"
 
       - if can? :update, q

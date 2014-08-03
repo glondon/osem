@@ -75,7 +75,7 @@ module ApplicationHelper
   end
 
   def normalize_array_length(hashmap, length)
-    hashmap.each do |key, value|
+    hashmap.each do |_, value|
       if value.length < length
         value.fill(value[-1], value.length...length)
       end
@@ -126,15 +126,15 @@ module ApplicationHelper
   end
 
   def add_association_link(association_name, form_builder, div_class, html_options = {})
-    link_to_add_association "Add " + association_name.to_s.singularize, form_builder, div_class, html_options.merge(:class => "assoc btn btn-success")
+    link_to_add_association "Add " + association_name.to_s.singularize, form_builder, div_class, html_options.merge(class: "assoc btn btn-success")
   end
 
   def remove_association_link(association_name, form_builder)
-    link_to_remove_association("Remove " + association_name.to_s.singularize, form_builder, :class => "assoc btn btn-danger") + tag(:hr)
+    link_to_remove_association("Remove " + association_name.to_s.singularize, form_builder, class: "assoc btn btn-danger") + tag(:hr)
   end
 
   def dynamic_association(association_name, title, form_builder, options = {})
-    render "shared/dynamic_association", :association_name => association_name, :title => title, :f => form_builder, :hint => options[:hint]
+    render "shared/dynamic_association", association_name: association_name, title: title, f: form_builder, hint: options[:hint]
   end
 
   def has_role?(current_user, role)
@@ -194,7 +194,6 @@ module ApplicationHelper
   def brand
     content_for(:brand) ||
     (default_brand if controller.class.parent == Admin) ||
-    (short_title_brand(@conference) if @conference) ||
     default_brand
   end
 
@@ -210,5 +209,17 @@ module ApplicationHelper
 
   def markdown_hint(text="")
     markdown("#{text} Please look at #{link_to '**Markdown Syntax**', 'https://daringfireball.net/projects/markdown/syntax', target: '_blank'} to format your text")
+  end
+
+  def omniauth_configured
+    providers = []
+    Devise.omniauth_providers.each do |provider|
+      provider_key = "#{provider}_key"
+      provider_secret = "#{provider}_secret"
+      unless Rails.application.secrets.send(provider_key).blank? || Rails.application.secrets.send(provider_secret).blank?
+        providers << provider
+      end
+    end
+    return providers
   end
 end

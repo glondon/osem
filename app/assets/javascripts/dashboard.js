@@ -79,6 +79,9 @@ $(function() {
                 options.fillColor = "rgba(255,255,255,0.0)";
                 options.strokeColor = conferences[i].color;
                 options.data = chart_data[conferences[i].short_title];
+                if(options.data == null || options.data.length == 0){
+                    options.data = [0];
+                }
                 result.push(options)
             }
         }

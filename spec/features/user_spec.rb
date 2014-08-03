@@ -34,6 +34,7 @@ feature User do
       sign_out
     end
   end
+
   describe 'organizer' do
     it_behaves_like 'organizer ability', :organizer
   end

@@ -17,8 +17,7 @@ describe Admin::ConferenceController do
       context 'valid attributes' do
 
         it 'locates the requested conference' do
-          patch :update, id: conference.short_title, conference:
-              attributes_for(:conference, title: 'Example Con')
+          patch :update, id: conference.short_title, conference: attributes_for(:conference, title: 'Example Con')
           expect(assigns(:conference)).to eq(conference)
         end
 
@@ -272,7 +271,7 @@ describe Admin::ConferenceController do
         if message
           expect(flash[:alert]).to match(/#{message}/)
         end
-      end
+#       end
     end
   end
 

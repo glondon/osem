@@ -6,15 +6,31 @@ class EmailSettings < ActiveRecord::Base
                   :confirmed_without_registration_subject,
                   :send_on_updated_conference_dates, :updated_conference_dates_subject,
                   :updated_conference_dates_template, :send_on_updated_conference_registration_dates,
-                  :updated_conference_registration_dates_subject, :updated_conference_registration_dates_template
+                  :updated_conference_registration_dates_subject, :updated_conference_registration_dates_template,
+                  :send_on_venue_update, :venue_update_subject, :venue_update_template,
+                  :send_on_call_for_papers_dates_updates, :send_on_call_for_papers_schedule_public,
+                  :call_for_papers_schedule_public_subject, :call_for_papers_dates_updates_subject,
+                  :call_for_papers_schedule_public_template, :call_for_papers_dates_updates_template
 
   def get_values(conference, user, event = nil)
     h = {
       'email' => user.email,
       'name' => user.name,
       'conference' => conference.title,
-      'registrationlink' => Rails.application.routes.url_helpers.conference_register_url(
-                            conference.short_title, host: CONFIG['url_for_emails'])
+      'conference_start_date' => conference.start_date,
+      'conference_end_date' => conference.end_date,
+      'registration_start_date' => conference.registration_start_date,
+      'registration_end_date' => conference.registration_end_date,
+      'venue' => conference.venue.name,
+      'venue_address' => conference.venue.address,
+      'registrationlink' => Rails.application.routes.url_helpers.register_conference_url(
+                            conference.short_title, host: CONFIG['url_for_emails']),
+      'conference_splash_link' => Rails.application.routes.url_helpers.conference_url(
+                                  conference.short_title, host: CONFIG['url_for_emails']),
+      'cfp_start_date' => conference.call_for_papers.start_date,
+      'cfp_end_date' => conference.call_for_papers.end_date,
+      'schedule_link' => Rails.application.routes.url_helpers.conference_schedule_url(
+                         conference.short_title, host: CONFIG['url_for_emails'])
     }
 
     if !event.nil?
@@ -23,12 +39,6 @@ class EmailSettings < ActiveRecord::Base
                            conference.short_title, event, host: CONFIG['url_for_emails'])
     end
     h
-  end
-
-  def generate_registration_email(conference, user)
-    values = get_values(conference, user)
-    template = registration_email_template
-    parse_template(template, values)
   end
 
   def generate_accepted_email(event)
@@ -49,9 +59,19 @@ class EmailSettings < ActiveRecord::Base
     parse_template(template, values)
   end
 
+  def generate_email_on_conf_updates(conference, user, conf_update_template)
+    values = get_values(conference, user)
+    template = conf_update_template
+    parse_template(template, values)
+  end
+
   def parse_template(text, values)
     values.each do |key, value|
-      text = text.gsub "{#{key}}", value unless text.blank?
+      if value.kind_of?(Date)
+        text = text.gsub "{#{key}}", value.strftime('%Y-%m-%d') unless text.blank?
+      else
+        text = text.gsub "{#{key}}", value unless text.blank? || value.blank?
+      end
     end
     text
   end

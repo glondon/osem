@@ -21,9 +21,9 @@ ActiveRecord::Schema.define(version: 20140718103856) do
     t.datetime "time"
   end
 
-  add_index "ahoy_events", ["time"], name: "index_ahoy_events_on_time", using: :btree
-  add_index "ahoy_events", ["user_id"], name: "index_ahoy_events_on_user_id", using: :btree
-  add_index "ahoy_events", ["visit_id"], name: "index_ahoy_events_on_visit_id", using: :btree
+  add_index "ahoy_events", ["time"], name: "index_ahoy_events_on_time"
+  add_index "ahoy_events", ["user_id"], name: "index_ahoy_events_on_user_id"
+  add_index "ahoy_events", ["visit_id"], name: "index_ahoy_events_on_visit_id"
 
   create_table "answers", force: true do |t|
     t.string   "title"
@@ -70,9 +70,9 @@ ActiveRecord::Schema.define(version: 20140718103856) do
     t.integer  "rgt"
   end
 
-  add_index "comments", ["commentable_id"], name: "index_comments_on_commentable_id", using: :btree
-  add_index "comments", ["commentable_type"], name: "index_comments_on_commentable_type", using: :btree
-  add_index "comments", ["user_id"], name: "index_comments_on_user_id", using: :btree
+  add_index "comments", ["commentable_id"], name: "index_comments_on_commentable_id"
+  add_index "comments", ["commentable_type"], name: "index_comments_on_commentable_type"
+  add_index "comments", ["user_id"], name: "index_comments_on_user_id"
 
   create_table "conferences", force: true do |t|
     t.string   "guid",                                            null: false
@@ -133,6 +133,22 @@ ActiveRecord::Schema.define(version: 20140718103856) do
     t.integer "question_id"
   end
 
+  create_table "delayed_jobs", force: true do |t|
+    t.integer  "priority",   default: 0, null: false
+    t.integer  "attempts",   default: 0, null: false
+    t.text     "handler",                null: false
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.string   "queue"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "delayed_jobs", ["priority", "run_at"], name: "delayed_jobs_priority"
+
   create_table "dietary_choices", force: true do |t|
     t.integer  "conference_id"
     t.string   "title",         null: false
@@ -151,10 +167,10 @@ ActiveRecord::Schema.define(version: 20140718103856) do
 
   create_table "email_settings", force: true do |t|
     t.integer  "conference_id"
-    t.boolean  "send_on_registration",                           default: true
-    t.boolean  "send_on_accepted",                               default: true
-    t.boolean  "send_on_rejected",                               default: true
-    t.boolean  "send_on_confirmed_without_registration",         default: true
+    t.boolean  "send_on_registration",                           default: false
+    t.boolean  "send_on_accepted",                               default: false
+    t.boolean  "send_on_rejected",                               default: false
+    t.boolean  "send_on_confirmed_without_registration",         default: false
     t.text     "registration_email_template"
     t.text     "accepted_email_template"
     t.text     "rejected_email_template"
@@ -165,12 +181,21 @@ ActiveRecord::Schema.define(version: 20140718103856) do
     t.string   "accepted_subject"
     t.string   "rejected_subject"
     t.string   "confirmed_without_registration_subject"
-    t.boolean  "send_on_updated_conference_dates",               default: true
+    t.boolean  "send_on_updated_conference_dates",               default: false
     t.string   "updated_conference_dates_subject"
     t.text     "updated_conference_dates_template"
-    t.boolean  "send_on_updated_conference_registration_dates",  default: true
+    t.boolean  "send_on_updated_conference_registration_dates",  default: false
     t.string   "updated_conference_registration_dates_subject"
     t.text     "updated_conference_registration_dates_template"
+    t.boolean  "send_on_venue_update",                           default: false
+    t.string   "venue_update_subject"
+    t.text     "venue_update_template"
+    t.boolean  "send_on_call_for_papers_dates_updates",          default: false
+    t.boolean  "send_on_call_for_papers_schedule_public",        default: false
+    t.string   "call_for_papers_schedule_public_subject"
+    t.string   "call_for_papers_dates_updates_subject"
+    t.text     "call_for_papers_schedule_public_template"
+    t.text     "call_for_papers_dates_updates_template"
   end
 
   create_table "event_attachments", force: true do |t|
@@ -452,9 +477,9 @@ ActiveRecord::Schema.define(version: 20140718103856) do
     t.boolean  "is_admin"
   end
 
-  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true, using: :btree
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["confirmation_token"], name: "index_users_on_confirmation_token", unique: true
+  add_index "users", ["email"], name: "index_users_on_email", unique: true
+  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
 
   create_table "vchoices", force: true do |t|
     t.integer "vday_id"
@@ -471,8 +496,8 @@ ActiveRecord::Schema.define(version: 20140718103856) do
 
   create_table "venues", force: true do |t|
     t.string   "guid"
-    t.text     "name"
-    t.text     "address"
+    t.text     "name",                       limit: 255
+    t.text     "address",                    limit: 255
     t.string   "website"
     t.text     "description"
     t.string   "offline_map_url"
@@ -483,8 +508,8 @@ ActiveRecord::Schema.define(version: 20140718103856) do
     t.string   "photo_content_type"
     t.integer  "photo_file_size"
     t.datetime "photo_updated_at"
-    t.boolean  "include_venue_in_splash",    default: false
-    t.boolean  "include_lodgings_in_splash", default: false
+    t.boolean  "include_venue_in_splash",                default: false
+    t.boolean  "include_lodgings_in_splash",             default: false
   end
 
   create_table "versions", force: true do |t|
@@ -497,7 +522,7 @@ ActiveRecord::Schema.define(version: 20140718103856) do
     t.datetime "created_at"
   end
 
-  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id", using: :btree
+  add_index "versions", ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
 
   create_table "visits", force: true do |t|
     t.uuid     "visitor_id"
@@ -522,7 +547,7 @@ ActiveRecord::Schema.define(version: 20140718103856) do
     t.datetime "started_at"
   end
 
-  add_index "visits", ["user_id"], name: "index_visits_on_user_id", using: :btree
+  add_index "visits", ["user_id"], name: "index_visits_on_user_id"
 
   create_table "votes", force: true do |t|
     t.integer  "event_id"

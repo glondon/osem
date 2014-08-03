@@ -405,7 +405,7 @@ describe Conference do
   end
 
   describe '#difficulty_levels' do
-    before (:each) do
+    before do
       subject.email_settings = create(:email_settings)
       @easy = create(:difficulty_level, title: 'Easy', color: '#000000')
       @hard = create(:difficulty_level, title: 'Hard', color: '#ffffff')
@@ -502,7 +502,7 @@ describe Conference do
   end
 
   describe 'event type distribution' do
-    before (:each) do
+    before do
       subject.email_settings = create(:email_settings)
       @workshop = create(:event_type, title: 'Workshop', color: '#000000')
       @lecture = create(:event_type, title: 'Lecture', color: '#ffffff')
@@ -598,7 +598,7 @@ describe Conference do
   end
 
   describe 'tracks_distribution' do
-    before (:each) do
+    before do
       subject.email_settings = create(:email_settings)
       @track_one = create(:track, name: 'Track One', color: '#000000')
       @track_two = create(:track, name: 'Track Two', color: '#ffffff')
@@ -716,6 +716,7 @@ describe Conference do
     it 'returns the last two past conferences if there are no pending conferences' do
       subject.start_date = Time.now - 10.days
       subject.end_date = Time.now - 5.days
+      subject.save
       c = create(:conference,
                  short_title: 'c', start_date: Time.now - 1.year,
                  end_date: Time.now - 360.days)
@@ -899,9 +900,9 @@ describe Conference do
     let!(:organizer_role) { create(:organizer_role) }
 
     it 'self#event_distribution calculates correct values with user' do
-      create(:user, last_sign_in_at: Time.now - 3.months) # active
+      create(:user, last_sign_in_at: Date.today - 3.months) # active
       create(:user, confirmed_at: nil) # unconfirmed
-      create(:user, last_sign_in_at: Time.now - 1.year - 1.day) # dead
+      create(:user, last_sign_in_at: Date.today - 1.year - 1.day) # dead
       result = {}
       result['Active'] = { 'color' => 'green', 'value' => 1 }
       result['Unconfirmed'] = { 'color' => 'red', 'value' => 1 }
@@ -911,7 +912,7 @@ describe Conference do
     end
 
     it 'self#event_distribution calculates correct with only active user' do
-      create(:user, last_sign_in_at: Time.now - 3.months) # active
+      create(:user, last_sign_in_at: Date.today - 3.months) # active
       result = {}
       result['Active'] = { 'color' => 'green', 'value' => 1 }
 
