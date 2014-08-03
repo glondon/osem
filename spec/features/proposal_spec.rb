@@ -36,13 +36,8 @@ feature Event do
 
       fill_in 'user_biography', with: 'Lorem ipsum biography'
 
-<<<<<<< HEAD
-      click_button 'Submit Session'
-      expect(current_path).to eq(conference_register_path(conference.short_title))
-=======
       click_button 'Create Event'
       expect(current_path).to eq(register_conference_path(conference.short_title))
->>>>>>> opensuse/master
 
       expect(Event.count).to eq(expected_count)
 
