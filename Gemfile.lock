@@ -404,12 +404,8 @@ DEPENDENCIES
   awesome_nested_set (~> 3.0.0.rc.5)
   axlsx_rails
   bootstrap-sass
-<<<<<<< HEAD
-  cancancan (~> 1.8)
-=======
   byebug
   cancancan
->>>>>>> opensuse/master
   capybara
   chart-js-rails
   cocoon
