@@ -10,7 +10,7 @@ describe 'User' do
     let(:event_confirmed) { create(:event, state: 'confirmed') }
     let(:someevent) { create(:event) }
 
-    context 'when is a guest' do  # Test abilities for guest users
+    context 'when user is a guest' do  # Test abilities for guest users
 
       it{ should be_able_to(:show, conference_public)}
       it{ should_not be_able_to(:show, conference_not_public)}
@@ -26,7 +26,7 @@ describe 'User' do
       it{ should_not be_able_to(:manage, :any)}
     end
 
-    context 'when is a Signed In User' do # Test abilities for signed in users (without any role)
+    context 'when user is a Signed In User' do # Test abilities for signed in users (without any role)
       let(:user) { create(:participant) }
       let(:registration1) { create(:registration, conference: conference_public, user: user) }
       let(:registration2) { create(:registration, conference: conference_not_public, user: user) }
@@ -45,7 +45,7 @@ describe 'User' do
       it{ should_not be_able_to(:manage, Conference) }
     end
 
-    context '#is_admin?' do
+    context 'user #is_admin?' do
       let(:user) { create(:admin) }
       it{ should be_able_to(:manage, User) }
     end
@@ -67,11 +67,11 @@ describe 'User' do
       it{ should_not be_able_to(:manage, someevent) }
     end
 
-    context 'when is an organizer' do
+    context 'when user is an organizer' do
       let!(:conference1) { create(:conference) }
       let!(:conference2) { create(:conference) }
-      let(:role) { create(:role, name: 'organizer', resource: conference1) }
-      let(:user) { create(:user, role_ids: role.id) }
+      let(:role) { create(:organizer_role, resource: conference1) }
+      let(:user) { create(:user, role_ids: [role.id]) }
       let(:someuser) { create(:user) }
       let(:registration1) { create(:registration, user: someuser, conference_id: conference1.id) }
 
@@ -81,7 +81,7 @@ describe 'User' do
       it{ should be_able_to(:create, Registration) }
     end
 
-    context 'when is part of cfp' do
+    context 'when user is part of cfp' do
       let!(:conference1) { create(:conference) }
       let!(:conference2) { create(:conference) }
       let(:role) { create(:role, name: 'cfp', resource: conference1) }
@@ -102,7 +102,7 @@ describe 'User' do
       it{ should be_able_to(:manage, create(:event_type, conference: conference1)) }
     end
 
-    context 'when has multiple roles' do
+    context 'when user has multiple roles' do
       let!(:conference1) { create(:conference) }
       let!(:conference2) { create(:conference) }
       let(:role_organizer) { create(:role, name: 'organizer', resource: conference1) }
