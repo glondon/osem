@@ -1,4 +1,4 @@
-class CallForPapers < ActiveRecord::Base
+class Callforpaper < ActiveRecord::Base
   attr_accessible :start_date, :end_date,
                   :description, :schedule_changes, :rating,
                   :schedule_public, :include_cfp_in_splash

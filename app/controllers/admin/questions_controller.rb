@@ -1,7 +1,7 @@
 module Admin
   class QuestionsController < ApplicationController
     load_and_authorize_resource :conference, find_by: :short_title
-    authorize_resource :question, through: :conference
+    load_and_authorize_resource :question, through: :conference
 
     def index
       @questions = Question.where(:global => true).all | Question.where(:conference_id => @conference.id)

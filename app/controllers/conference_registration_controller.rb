@@ -1,6 +1,6 @@
 class ConferenceRegistrationController < ApplicationController
   before_filter :verify_user
-  load_and_authorize_resource :conference, find_by: :short_title
+  load_resource :conference, find_by: :short_title
   authorize_resource :conference_registration, class: Registration
 
   def register

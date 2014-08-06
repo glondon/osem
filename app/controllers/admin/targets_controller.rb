@@ -1,7 +1,7 @@
 module Admin
   class TargetsController < ApplicationController
     load_and_authorize_resource :conference, find_by: :short_title
-    authorize_resource :target, through: :conference
+    authorize_resource through: :conference
 
     def index
     end

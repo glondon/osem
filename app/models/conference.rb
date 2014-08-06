@@ -179,7 +179,7 @@ class Conference < ActiveRecord::Base
     if call_for_papers && events
       submissions = events.group(:week).count
       start_week = call_for_papers.start_week
-      weeks = call_for_papers.weeks
+      weeks = call_for_paper.weeks
       result = calculate_items_per_week(start_week, weeks, submissions)
     end
     result

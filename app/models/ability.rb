@@ -18,9 +18,6 @@ class Ability
 
     # Order Abilities
     # (Check https://github.com/CanCanCommunity/cancancan/wiki/Ability-Precedence)
-
-    user ||= User.new # guest user (not logged in)
-
     # Check roles of user, using rolify. Role name is *case sensitive*
     # user.is_organizer? or user.has_role? :organizer
     # user.is_cfp_of? Conference or user.has_role? :cfp, Conference
@@ -30,27 +27,71 @@ class Ability
     # The following is wrong because a user will only have 'cfp' role for a specific conference
     # user.is_cfp? # This is always false
 
+
+    user ||= User.new # guest user (not logged in)
     # Ids of all the conferences for which the user has an 'organizer' role
     conf_ids_for_organizer =
-        Conference.with_role(:organizer, user).pluck(:id) unless user.new_record?
-    # Ids of the venues of the conference for which (conferences) the user has an 'organizer' role
-    conf_ids_for_organizer_venue =
-        Conference.with_role(:organizer, user).pluck(:venue_id) unless user.new_record?
-    # Ids of all the conferences for which the user has a 'cfp' role
+        Conference.with_role(:organizer, user).pluck(:id)
+    venue_ids_for_organizer =
+        Conference.with_role(:organizer, user).pluck(:venue_id)
     conf_ids_for_cfp =
-        Conference.with_role(:cfp, user).pluck(:id) unless user.new_record?
+      Conference.with_role(:cfp, user).pluck(:id)
     # Ids of all the conferences for which the user has an 'info_desk' role
     conf_ids_for_info_desk =
-        Conference.with_role(:info_desk, user).pluck(:id) unless user.new_record?
+        Conference.with_role(:info_desk, user).pluck(:id)
     # Ids of all the conferences for which the user has a 'volunteer_coordinator' role
     conf_ids_for_volunteer_coordinator =
-        Conference.with_role(:volunteer_coordinator, user).pluck(:id) unless user.new_record?
-    event_ids_for_user =
-      EventUser.where(user_id: user.id).pluck(:event_id)
+        Conference.with_role(:volunteer_coordinator, user).pluck(:id)
 
+    conference_ids = conf_ids_for_organizer + conf_ids_for_cfp + conf_ids_for_info_desk + conf_ids_for_volunteer_coordinator
+
+    if user.new_record?
+      guest(user)
+    else
+      roles = Role::ACTIONABLES.map {|i| i.parameterize.underscore}
+      if (user.roles.pluck(:name) & roles).empty? && !user.is_admin # User has no roles
+        signed_in(user)
+      else
+        # User with role
+        can [:index], Conference
+        can [:show], Conference#, id: conference_ids
+        can [:edit, :update], Conference, id: conf_ids_for_organizer
+        can [:create], Conference if user.is_admin
+        can :manage, Venue, id: venue_ids_for_organizer
+        can :manage, Registration, conference_id: conf_ids_for_organizer + conf_ids_for_info_desk
+        can :manage, Question, conference_id: conf_ids_for_organizer + conf_ids_for_info_desk
+#         ###
+#         can :manage, :volunteer if user.has_role? :volunteer_coordinator or user.has_role? :organizer
+#         can :manage, Vposition, conference_id: conf_ids_for_organizer + conf_ids_for_volunteer_coordinator
+#         can :manage, Vday, conference_id: conf_ids_for_organizer + conf_ids_for_volunteer_coordinator
+        can :manage, Event, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+#         can :manage, Vote, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+        can :manage, Callforpaper, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+#         can :manage, EventType, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+#         can :manage, Track, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+#         can :manage, DifficultyLevel, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+#         can :manage, :schedule
+#         can :manage, EmailSettings, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+#         can :manage, Campaign, conference_id: conf_ids_for_organizer
+#         can :manage, Lodging, venue_id: venue_ids_for_organizer
+#         can :manage, Photo, conference_id: conf_ids_for_organizer
+#         can :manage, Room, conference_id: conf_ids_for_organizer
+#         can [:manage, :menu], Sponsor, conference_id: conf_ids_for_organizer
+#         can [:manage, :menu], SponsorshipLevel, conference_id: conf_ids_for_organizer
+#         can :manage, SupporterLevel, conference_id: conf_ids_for_organizer
+#         # SupporterRegistration
+#         can :manage, Target, conference_id: conf_ids_for_organizer
+#         can :index, User
+#         can [:show, :update, :add_role, :destroy], User if user.is_admin
+#         can :manage, Role, resource_id: conf_ids_for_organizer
+      end
+    end
+  end
+
+  def guest(user)
     ## Abilities for everyone, even guests (not logged in users)
     can :show, Conference do |conference|
-      conference.make_conference_public
+      conference.make_conference_public == true
     end
 
     can :show, Event do |event|
@@ -58,109 +99,23 @@ class Ability
     end
 
     can :index, :schedule # show?
+  end
 
-    ## Abilities for signed in users
-    unless user.new_record?
-      can :show, Conference do |conference|
-        conference.make_conference_public
-      end
+  def signed_in(user)
+    # Conference Registration
+    can :manage, Registration, user_id: user.id
 
-      # Conference Registration
-      can :manage, Registration
+    ## Proposals
+    # Users can edit their own proposals
+    # Can manage an event if the user is a speaker or a submitter of that event
 
-      # Proposals
-      # Users can edit their own proposals
-      # Organizer and CfP team can edit any proposal they want
-      # Can manage an event if the user is a speaker or a submitter of that event
-#       can [:index, :create], Event
-      can :create, Event
-      can :manage, Event do |event|
-        event.event_users.where(:user_id => user.id).present?
-      end
-
-      can :manage, EventAttachment do |ea|
-        Event.find(ea.event_id).event_users.where(user_id: user.id).present?
-      end
-      can :create, EventAttachment
+    can :manage, Event do |event|
+      event.event_users.where(:user_id => user.id).present?
     end
 
-    ## Abilities for admins
-    if user.is_admin # is_admin is an attribute of User
-      can :create, Conference
-      can :index, Conference # this will allow the Conference to appear in the menu
-      can :view, Conference # for /admin/conference overview
-      can :manage, User # to make other users admins
+    can :manage, EventAttachment do |ea|
+      Event.find(ea.event_id).event_users.where(user_id: user.id).present?
     end
-
-    ## Abilities for ORGANIZER
-    # If a user is organizer of a conference, they can manage everything related to this conference
-
-    if user.has_role? :organizer, :any
-      can :manage, :all, conference_id: conf_ids_for_organizer
-
-      # Registrations controller authorizes conference resource too, so we don't have to worry about
-      # accessing the new registration page of a conference we don't have access to
-      can :create, Registration, conference_id: conf_ids_for_organizer
-
-      # Override previous can because
-      # Models Conference, Venue, User, Schedule do not have a 'conference_id' attribute
-      cannot :manage, Conference
-      cannot :manage, Venue
-      cannot :manage, User
-      cannot :manage, :schedule
-      can :manage, :schedule
-
-      # Authorize explicitely, so that it doesn't look for a 'conference_id'
-      can :manage, :volunteer
-
-      # Authorize Conference by its 'id' attribute
-      can :manage, Conference, id: conf_ids_for_organizer
-      # Authorize venues of conferences, which user can manage
-      can :manage, Venue, id: conf_ids_for_organizer_venue
-      # id: Conference.where(id: conf_ids_for_organizer).map(&:venue_id)
-      # User can view the admin 'users' page if he is an organizer for any conference
-      can :manage, User
-      # To assign roles to users
-      # can :manage, Role, resource_id: conf_ids_for_organizer
-    end
-
-    ## Abilities for CfP
-    # A user can manage events of the conference, for which conference the user has a 'cfp' role
-    if user.has_role? :cfp, :any
-      # Can view dashboard for specific conference (show) and for all conference (index)
-      can [:index, :show], Conference, id: conf_ids_for_cfp
-      can :manage, Event, conference_id: conf_ids_for_cfp
-      can :manage, CallForPapers, conference_id: conf_ids_for_cfp
-      can :manage, EventType, conference_id: conf_ids_for_cfp
-      can :manage, Track, conference_id: conf_ids_for_cfp
-      can :manage, DifficultyLevel, conference_id: conf_ids_for_cfp
-      can :manage, :schedule
-
-      can :manage, EmailSettings, conference_id: conf_ids_for_cfp
-      can :index, User
-    end
-
-    ## Abilities for Info Desk
-    if user.has_role? :info_desk, :any
-      can [:index, :show], Conference, id: conf_ids_for_info_desk
-      can :manage, Registration, conference_id: conf_ids_for_info_desk
-      can :manage, Question, conference_id: conf_ids_for_info_desk
-
-      # Previously we authorized Registrations of a specific conference, but that doesn't work
-      # if we want to create a new one, which does not belong to any conference yet
-      # Registrations controller authorizes conference resource too, so we don't have to worry about
-      # accessing the new registration page of a conference we don't have access to
-      can :create, Registration, conference_id: conf_ids_for_info_desk
-
-      can :index, User
-    end
-
-    ## Abilities for Volunteer Coordinator
-    if user.has_role? :volunteer_coordinator, :any
-      can [:index, :show], Conference, id: conf_ids_for_volunteer_coordinator
-      can :manage, Vposition, conference_id: conf_ids_for_volunteer_coordinator
-      can :manage, Vday, conference_id: conf_ids_for_volunteer_coordinator
-      can :manage, :volunteer
-    end
+    can :create, EventAttachment
   end
 end

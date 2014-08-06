@@ -100,7 +100,28 @@ describe 'User' do
 
       it{ should be_able_to(:manage, cfp) }
       it{ should be_able_to(:manage, create(:event_type, conference: conference1)) }
-#       it{ should_not be_able_to(:create, Registration) }
+    end
+
+    context 'when has multiple roles' do
+      let!(:conference1) { create(:conference) }
+      let!(:conference2) { create(:conference) }
+      let(:role_organizer) { create(:role, name: 'organizer', resource: conference1) }
+      let(:role_cfp) { create(:role, name: 'cfp', resource: conference2) }
+      let(:user) { create(:user, role_ids: [role_cfp.id, role_organizer.id]) }
+      let(:someuser) { create(:user) }
+      let(:registration1) { create(:registration, user: someuser, conference_id: conference1.id) }
+      let(:registration2) { create(:registration, user: someuser, conference_id: conference2.id) }
+
+      it{ should be_able_to(:manage, conference1) }
+      it{ should be_able_to(:manage, registration1) }
+
+      it{ should_not be_able_to(:manage, conference2) }
+      it{ should_not be_able_to(:manage, registration2) }
+
+#       it 'shows menu correctly' do
+#         visit admin_conference_path(conference1.short_title)
+#         expect(page.has_content?('Registrations')).to be true
+#     end
     end
   end
 end

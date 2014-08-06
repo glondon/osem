@@ -4,6 +4,7 @@ module Admin
     load_and_authorize_resource through: :conference
 
     def index
+      authorize! :update, Registration.new(conference_id: @conference.id)
       session[:return_to] ||= request.referer
       @pdf_filename = "#{@conference.title}.pdf"
       @registrations = @conference.registrations.includes(:user)
