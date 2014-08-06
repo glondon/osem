@@ -91,7 +91,7 @@
       = link_to(admin_conference_emails_path(@conference.short_title)) do
         %span.glyphicon.glyphicon-envelope
         E-Mails
-  - if can? :update, @conference.call_for_papers
+  - if can? :update, CallForPapers.new(conference_id: @conference.id)
     %li{:class=> "#{active_nav_li(admin_conference_callforpapers_path(@conference.short_title))} myAccordion"}
       = link_to(admin_conference_callforpapers_path(@conference.short_title)) do
         %span.glyphicon.glyphicon-comment

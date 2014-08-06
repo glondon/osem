@@ -4,7 +4,7 @@ module Admin
 #     load_and_authorize_resource :cfp, class: 'CallForPapers', through: :conference
 
     def show
-      authorize! :show, @conference.call_for_papers
+      authorize! :show, CallForPapers.new(conference_id: @conference.id)
       @cfp = @conference.call_for_papers
       if @cfp.nil?
         @cfp = CallForPapers.new
@@ -40,7 +40,7 @@ module Admin
     end
 
     def create
-      authorize! :update, @conference.call_for_papers
+      authorize! :update, CallForPapers.new(conference_id: @conference.id)
       @cfp = CallForPapers.new(params[:call_for_papers])
       if @cfp.valid?
         @cfp.save
