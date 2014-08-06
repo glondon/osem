@@ -1,9 +1,10 @@
 module Admin
   class QuestionsController < ApplicationController
     load_and_authorize_resource :conference, find_by: :short_title
-    load_and_authorize_resource :question, through: :conference
+    load_and_authorize_resource through: :conference
 
     def index
+      authorize! :update, Question.new(conference_id: @conference.id)
       @questions = Question.where(:global => true).all | Question.where(:conference_id => @conference.id)
       @questions_conference = @conference.questions
       @new_question = @conference.questions.new

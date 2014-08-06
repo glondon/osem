@@ -1,9 +1,10 @@
 module Admin
   class CallforpapersController < ApplicationController
     load_and_authorize_resource :conference, find_by: :short_title
-#     load_and_authorize_resource :call_for_paper, class: 'CallForPapers', through: :conference
+#     load_and_authorize_resource :cfp, class: 'CallForPapers', through: :conference
 
     def show
+      authorize! :show, @conference.call_for_papers
       @cfp = @conference.call_for_papers
       if @cfp.nil?
         @cfp = CallForPapers.new
@@ -11,6 +12,7 @@ module Admin
     end
 
     def update
+      authorize! :update, @conference.call_for_papers
       @cfp = @conference.call_for_papers
       @cfp.assign_attributes(params[:call_for_papers])
       notify_on_schedule_public = @cfp.schedule_public_changed? && @cfp.schedule_public\
@@ -38,6 +40,7 @@ module Admin
     end
 
     def create
+      authorize! :update, @conference.call_for_papers
       @cfp = CallForPapers.new(params[:call_for_papers])
       if @cfp.valid?
         @cfp.save

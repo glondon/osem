@@ -103,8 +103,11 @@ describe 'User' do
     end
 
     context 'when user has multiple roles' do
-      let!(:conference1) { create(:conference) }
-      let!(:conference2) { create(:conference) }
+      let!(:conference1) { create(:conference) } # user is organizer
+      let!(:conference2) { create(:conference) } # user is cfp
+      let!(:conference3) { create(:conference) } # user is info_desk
+      let!(:conference4) { create(:conference) } # user is volunteer coordinator
+      let!(:conference5) { create(:conference) } # user has no role
       let(:role_organizer) { create(:role, name: 'organizer', resource: conference1) }
       let(:role_cfp) { create(:role, name: 'cfp', resource: conference2) }
       let(:user) { create(:user, role_ids: [role_cfp.id, role_organizer.id]) }
@@ -114,14 +117,58 @@ describe 'User' do
 
       it{ should be_able_to(:manage, conference1) }
       it{ should be_able_to(:manage, registration1) }
+      it{ should be_able_to(:manage, conference1.events.new) }
+      it{ should be_able_to(:manage, conference2.events.new) }
 
       it{ should_not be_able_to(:manage, conference2) }
       it{ should_not be_able_to(:manage, registration2) }
 
 #       it 'shows menu correctly' do
 #         visit admin_conference_path(conference1.short_title)
+#         expect(page.has_content?('SETTINGS')).to be true
+#         expect(page.has_content?('MANAGE')).to be true
 #         expect(page.has_content?('Registrations')).to be true
-#     end
+#         expect(page.has_content?('Events')).to be true
+#         expect(page.has_content?('Schedule')).to be true
+#         expect(page.has_content?('Campaigns')).to be true
+#         expect(page.has_content?('Targets')).to be true
+#         expect(page.has_content?('Venue')).to be true
+#         expect(page.has_content?('Sponsorship')).to be true
+#         expect(page.has_content?('Supporter Levels')).to be true
+#         expect(page.has_content?('Emails')).to be true
+#         expect(page.has_content?('Call for papers')).to be true
+#         expect(page.has_content?('Questions')).to be true
+
+#         visit admin_conference_path(conference2.short_title)
+#         expect(page.has_content?('SETTINGS')).to be true
+#         expect(page.has_content?('MANAGE')).to not_be true
+#         expect(page.has_content?('Registrations')).to not_be true
+#         expect(page.has_content?('Events')).to be true
+#         expect(page.has_content?('Schedule')).to be true
+#         expect(page.has_content?('Campaigns')).to not_be true
+#         expect(page.has_content?('Targets')).to not_be true
+#         expect(page.has_content?('Venue')).to be true
+#         expect(page.has_content?('Sponsorship')).to not_be true
+#         expect(page.has_content?('Supporter Levels')).to not_be true
+#         expect(page.has_content?('Emails')).to be true
+#         expect(page.has_content?('Call for papers')).to be true
+#         expect(page.has_content?('Questions')).to not_be true
+
+#         visit admin_conference_path(conference5.short_title)
+#         expect(page.has_content?('SETTINGS')).to not_be true
+#         expect(page.has_content?('MANAGE')).to be true
+#         expect(page.has_content?('Registrations')).to not_be true
+#         expect(page.has_content?('Events')).to not_be true
+#         expect(page.has_content?('Schedule')).to not_be true
+#         expect(page.has_content?('Campaigns')).to not_be true
+#         expect(page.has_content?('Targets')).to not_be true
+#         expect(page.has_content?('Venue')).to not_be true
+#         expect(page.has_content?('Sponsorship')).to not_be true
+#         expect(page.has_content?('Supporter Levels')).to not_be true
+#         expect(page.has_content?('Emails')).to not_be true
+#         expect(page.has_content?('Call for papers')).to not_be true
+#         expect(page.has_content?('Questions')).to not_be true
+#       end
     end
   end
 end

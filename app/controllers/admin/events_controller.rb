@@ -14,6 +14,7 @@ module Admin
     end
 
     def index
+      authorize! :index, @conference.events.build
       @conference = Conference.find_by(short_title: params[:conference_id])
       @events = @conference.events
       @tracks = @conference.tracks

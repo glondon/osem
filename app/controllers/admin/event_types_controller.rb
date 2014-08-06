@@ -3,6 +3,10 @@ module Admin
     load_and_authorize_resource :conference, find_by: :short_title
     authorize_resource :event_type, through: :conference
 
+    def index
+      authorize! :index, EventType.new(conference_id: @conference.id)
+    end
+
     def show
       render :eventtypes
     end

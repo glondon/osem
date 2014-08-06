@@ -1,7 +1,7 @@
 module Admin
   class Admin::SupportersController < ApplicationController
     load_and_authorize_resource :conference, find_by: :short_title
-    load_and_authorize_resource :supporter, through: :conference
+    load_and_authorize_resource through: :conference
 
     def index
       respond_to do |format|

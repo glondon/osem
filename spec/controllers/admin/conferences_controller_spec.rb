@@ -271,7 +271,7 @@ describe Admin::ConferenceController do
         if message
           expect(flash[:alert]).to match(/#{message}/)
         end
-#       end
+      end
     end
   end
 

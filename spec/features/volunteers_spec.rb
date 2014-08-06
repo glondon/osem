@@ -7,7 +7,7 @@ feature Conference do
   let(:organizer) { create(:organizer_conference_1) }
   let(:conference) { create(:conference) }
 
-#   shared_examples 'volunteer' do
+  shared_examples 'volunteer' do
     scenario 'adds and updates vdays', feature: true, js: true do
       sign_in(organizer)
       visit admin_conference_volunteers_info_path(

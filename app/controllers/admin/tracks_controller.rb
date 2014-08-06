@@ -3,6 +3,10 @@ module Admin
     load_and_authorize_resource :conference, find_by: :short_title
     authorize_resource through: :conference
 
+    def index
+      authorize! :index, Track.new(conference_id: @conference.id)
+    end
+
     def show
       respond_to do |format|
         format.html { render :tracks_list }

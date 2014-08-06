@@ -1,7 +1,7 @@
 module Admin
   class Admin::SupporterLevelsController < ApplicationController
     load_and_authorize_resource :conference, find_by: :short_title
-    authorize_resource :supporter_level, through: :conference
+    authorize_resource through: :conference
 
     def show
       render :supporter_levels

@@ -1,7 +1,11 @@
 module Admin
   class SponsorshipLevelsController < ApplicationController
     load_and_authorize_resource :conference, find_by: :short_title
-    authorize_resource :sponsorship_level, through: :conference
+    authorize_resource through: :conference
+
+    def index
+      authorize! :index, SponsorshipLevel.new(conference_id: @conference.id)
+    end
 
     def update
       if @conference.update_attributes(params[:conference])

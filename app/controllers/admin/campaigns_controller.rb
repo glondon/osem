@@ -4,12 +4,10 @@ module Admin
     load_and_authorize_resource :campaign, through: :conference
 
     def index
-      @conference = Conference.find_by(short_title: params[:conference_id])
       @campaigns = @conference.campaigns
     end
 
     def create
-      @conference = Conference.find_by(short_title: params[:conference_id])
       @campaign = @conference.campaigns.new(params[:campaign])
       @campaign.conference_id = @conference.id
 
@@ -24,19 +22,13 @@ module Admin
     end
 
     def new
-      @conference = Conference.find_by(short_title: params[:conference_id])
       @campaign = @conference.campaigns.new
     end
 
     def edit
-      @conference = Conference.find_by(short_title: params[:conference_id])
-      @campaign = Campaign.find(params[:id])
     end
 
     def update
-      @conference = Conference.find_by(short_title: params[:conference_id])
-      @campaign = Campaign.find(params[:id])
-
       if @campaign.update_attributes(params[:campaign])
         redirect_to(admin_conference_campaigns_path(
                         conference_id: @conference.short_title),
@@ -51,8 +43,6 @@ module Admin
     end
 
     def destroy
-      @conference = Conference.find_by(short_title: params[:conference_id])
-      @campaign = Campaign.find(params[:id])
       if @campaign.destroy
         redirect_to(admin_conference_campaigns_path(conference_id: @conference.short_title),
                     notice: "Campaign '#{@campaign.name}' successfully deleted.")

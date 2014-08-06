@@ -6,7 +6,7 @@ FactoryGirl.define do
     end
 
     factory :participant_role do
-      name 'Participant'
+      name 'participant'
     end
 
     factory :organizer_conference_1_role do
