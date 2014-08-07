@@ -35,7 +35,7 @@ feature Conference do
     scenario 'update conference', feature: true, js: true do
       conference = create(:conference)
       expected_count = Conference.count
-      sign_in create(:organizer_conference_1_role)
+      sign_in create(:organizer_conference_1)
 
       visit edit_admin_conference_path(conference.short_title)
       fill_in 'conference_title', with: 'New Con'
@@ -52,7 +52,7 @@ feature Conference do
     end
   end
 
-  describe 'organizer' do
+  describe 'admin' do
     it_behaves_like 'add and update conference', :admin
   end
 end

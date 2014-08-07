@@ -13,7 +13,7 @@ feature Event do
       participant = create(:participant, email: 'participant@example.com')
       expected_count = Event.count + 1
       conference = create(:conference)
-      conference.call_for_papers = create(:call_for_papers)
+      conference.call_for_papers = create(:call_for_papers, start_date: Date.today, end_date: Date.today + 1)
       conference.email_settings = create(:email_settings)
       conference.event_types = [create(:event_type)]
 

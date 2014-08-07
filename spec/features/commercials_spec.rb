@@ -2,15 +2,15 @@ require 'spec_helper'
 
 feature Commercial do
   # It is necessary to use bang version of let to build roles before user
-  let!(:organizer_role) { create(:organizer_role) }
+  let!(:conference) { create(:conference) }
+  let!(:organizer_conference_1_role) { create(:organizer_conference_1_role, resource_id: conference.id) }
   let!(:participant_role) { create(:participant_role) }
-  let!(:admin_role) { create(:admin_role) }
 
   shared_examples 'adds and updates a commercial' do |user|
     scenario 'of a conference',
              feature: true, js: true do
 
-      conference = create(:conference)
+      conference = Conference.find(1)
       expected_count = conference.commercials.count + 1
 
       sign_in create(user)
@@ -66,6 +66,6 @@ feature Commercial do
   end
 
   describe 'organizer' do
-    it_behaves_like 'adds and updates a commercial', :organizer
+    it_behaves_like 'adds and updates a commercial', :organizer_conference_1
   end
 end

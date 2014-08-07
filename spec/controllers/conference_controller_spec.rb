@@ -24,7 +24,7 @@ describe ConferenceController do
 
       it 'renders flash saying conference not ready' do
         get :show, id: conference.short_title
-        expect(flash[:notice]).to eq('Conference not ready yet!')
+        expect(flash[:alert]).to eq('You are not authorized to access this page.')
       end
     end
     context 'gallery photos for splash' do

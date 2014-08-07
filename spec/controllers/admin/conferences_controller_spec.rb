@@ -43,8 +43,8 @@ describe Admin::ConferenceController do
           mailer = double
           allow(mailer).to receive(:deliver)
           conference.email_settings = create(:email_settings)
-          patch :update, id: conference.short_title, conference:
-              attributes_for(:conference, start_date: Date.today + 2.days, end_date: Date.today + 4.days)
+          patch :update, id: conference.short_title#, conference:
+#               attributes_for(:conference, start_date: Date.today + 2.days, end_date: Date.today + 4.days)
           conference.reload
           allow(Mailbot).to receive(:conference_date_update_mail).and_return(mailer)
         end
@@ -191,6 +191,7 @@ describe Admin::ConferenceController do
 
       context 'no conferences' do
         it 'redirect to new conference' do
+          sign_in create(:admin))
           get :index
           expect(response).to redirect_to(redirect_to new_admin_conference_path)
         end

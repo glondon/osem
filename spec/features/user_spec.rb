@@ -2,11 +2,12 @@ require 'spec_helper'
 feature User do
   # It is necessary to use bang version of let to build roles before user
   let!(:participant_role) { create(:participant_role) }
+  let!(:organizer_conference_1_role) { create(:organizer_conference_1_role) }
   let(:admin) { create(:admin) }
 
   shared_examples 'organizer ability' do |_user|
     scenario 'deletes a user', feature: true, js: true do
-      sign_in(organizer)
+      sign_in(_user)
       visit admin_users_path
       expected_count = User.count - 1
       page.all('btn btn-primary btn-danger') do
@@ -35,6 +36,6 @@ feature User do
   end
 
   describe 'organizer' do
-    it_behaves_like 'organizer ability', :organizer
+    it_behaves_like 'organizer ability', :admin
   end
 end

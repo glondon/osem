@@ -1,12 +1,12 @@
 FactoryGirl.define do
   factory :role do
 
-    factory :organizer_role do
-      name 'organizer'
-    end
-
     factory :participant_role do
       name 'participant'
+    end
+
+    factory :organizer_role do
+      name 'organizer'
     end
 
     factory :organizer_conference_1_role do

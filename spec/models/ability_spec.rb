@@ -48,6 +48,7 @@ describe 'User' do
     context 'user #is_admin?' do
       let(:user) { create(:admin) }
       it{ should be_able_to(:manage, User) }
+      it{ should be_able_to(:create, Conference) }
     end
 
     context 'signed in users can manage their events' do
@@ -107,68 +108,54 @@ describe 'User' do
       let!(:conference2) { create(:conference) } # user is cfp
       let!(:conference3) { create(:conference) } # user is info_desk
       let!(:conference4) { create(:conference) } # user is volunteer coordinator
-      let!(:conference5) { create(:conference) } # user has no role
+      let!(:conference5) { create(:conference, make_conference_public: true) } # user has no role
+      let!(:conference6) { create(:conference, make_conference_public: false) } # user has no role
       let(:role_organizer) { create(:role, name: 'organizer', resource: conference1) }
       let(:role_cfp) { create(:role, name: 'cfp', resource: conference2) }
-      let(:user) { create(:user, role_ids: [role_cfp.id, role_organizer.id]) }
-      let(:someuser) { create(:user) }
-      let(:registration1) { create(:registration, user: someuser, conference_id: conference1.id) }
-      let(:registration2) { create(:registration, user: someuser, conference_id: conference2.id) }
+      let(:role_info_desk) { create(:role, name: 'info_desk', resource: conference3) }
+      let(:role_volunteer_coordinator) { create(:role, name: 'volunteer_coordinator', resource: conference4) }
+      let(:user) { create(:user, role_ids: [role_cfp.id, role_organizer.id, role_cfp.id, role_info_desk.id, role_volunteer_coordinator.id]) }
+      let(:admin) { create(:admin) }
 
       it{ should be_able_to(:manage, conference1) }
-      it{ should be_able_to(:manage, registration1) }
+      it{ should_not be_able_to(:update, conference2) }
+      it{ should_not be_able_to(:update, conference3) }
+      it{ should_not be_able_to(:update, conference4) }
+      it{ should_not be_able_to(:update, conference5) }
+
+      it{ should be_able_to(:show, conference1) }
+      it{ should be_able_to(:show, conference2) }
+      it{ should be_able_to(:show, conference3) }
+      it{ should be_able_to(:show, conference4) }
+      it{ should be_able_to(:show, conference5) }
+      it{ should be_able_to(:show, conference6) }
+
+      it{ should be_able_to(:manage, conference1.venue) }
+      it{ should_not be_able_to(:manage, conference2.venue) }
+      it{ should_not be_able_to(:manage, conference3.venue) }
+      it{ should_not be_able_to(:manage, conference4.venue) }
+      it{ should_not be_able_to(:manage, conference5.venue) }
+
+      it{ should be_able_to(:manage, conference1.registrations.new) }
+      it{ should_not be_able_to(:manage, conference2.registrations.new) }
+      it{ should be_able_to(:manage, conference3.registrations.new) }
+      it{ should_not be_able_to(:manage, conference4.registrations.new) }
+      it{ should_not be_able_to(:manage, conference5.registrations.new) }
+
       it{ should be_able_to(:manage, conference1.events.new) }
       it{ should be_able_to(:manage, conference2.events.new) }
+      it{ should_not be_able_to(:manage, conference3.events.new) }
+      it{ should_not be_able_to(:manage, conference4.events.new) }
+      it{ should_not be_able_to(:manage, conference5.events.new) }
 
-      it{ should_not be_able_to(:manage, conference2) }
-      it{ should_not be_able_to(:manage, registration2) }
+#       it{ should be_able_to(:manage, conference1.questions.new) }
+#       it{ should_not be_able_to(:manage, conference2.questions.new) }
+#       it{ should be_able_to(:manage, conference3.questions.new) }
+#       it{ should_not be_able_to(:manage, conference4.questions.new) }
+#       it{ should_not be_able_to(:manage, conference5.questions.new) }
 
-#       it 'shows menu correctly' do
-#         visit admin_conference_path(conference1.short_title)
-#         expect(page.has_content?('SETTINGS')).to be true
-#         expect(page.has_content?('MANAGE')).to be true
-#         expect(page.has_content?('Registrations')).to be true
-#         expect(page.has_content?('Events')).to be true
-#         expect(page.has_content?('Schedule')).to be true
-#         expect(page.has_content?('Campaigns')).to be true
-#         expect(page.has_content?('Targets')).to be true
-#         expect(page.has_content?('Venue')).to be true
-#         expect(page.has_content?('Sponsorship')).to be true
-#         expect(page.has_content?('Supporter Levels')).to be true
-#         expect(page.has_content?('Emails')).to be true
-#         expect(page.has_content?('Call for papers')).to be true
-#         expect(page.has_content?('Questions')).to be true
 
-#         visit admin_conference_path(conference2.short_title)
-#         expect(page.has_content?('SETTINGS')).to be true
-#         expect(page.has_content?('MANAGE')).to not_be true
-#         expect(page.has_content?('Registrations')).to not_be true
-#         expect(page.has_content?('Events')).to be true
-#         expect(page.has_content?('Schedule')).to be true
-#         expect(page.has_content?('Campaigns')).to not_be true
-#         expect(page.has_content?('Targets')).to not_be true
-#         expect(page.has_content?('Venue')).to be true
-#         expect(page.has_content?('Sponsorship')).to not_be true
-#         expect(page.has_content?('Supporter Levels')).to not_be true
-#         expect(page.has_content?('Emails')).to be true
-#         expect(page.has_content?('Call for papers')).to be true
-#         expect(page.has_content?('Questions')).to not_be true
 
-#         visit admin_conference_path(conference5.short_title)
-#         expect(page.has_content?('SETTINGS')).to not_be true
-#         expect(page.has_content?('MANAGE')).to be true
-#         expect(page.has_content?('Registrations')).to not_be true
-#         expect(page.has_content?('Events')).to not_be true
-#         expect(page.has_content?('Schedule')).to not_be true
-#         expect(page.has_content?('Campaigns')).to not_be true
-#         expect(page.has_content?('Targets')).to not_be true
-#         expect(page.has_content?('Venue')).to not_be true
-#         expect(page.has_content?('Sponsorship')).to not_be true
-#         expect(page.has_content?('Supporter Levels')).to not_be true
-#         expect(page.has_content?('Emails')).to not_be true
-#         expect(page.has_content?('Call for papers')).to not_be true
-#         expect(page.has_content?('Questions')).to not_be true
-#       end
     end
   end
 end
