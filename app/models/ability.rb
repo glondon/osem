@@ -56,9 +56,8 @@ class Ability
         signed_in(user)
       else
         # User with role
-        can :manage, User if user.is_admin
+        can :manage, User if user.is_admin || (user.has_role? :organizer, :any)
         can [:new, :create], Conference if user.is_admin
-        # can :manage, Role, resource_id:
         can [:index, :show], Conference
         can :manage, Conference, id: conf_ids_for_organizer
         can :manage, Venue, id: venue_ids_for_organizer

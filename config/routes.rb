@@ -12,6 +12,12 @@ Osem::Application.routes.draw do
     end
     resources :people
     resources :conference do
+      member do
+        get :roles
+        post :roles
+        delete :remove_roles
+
+      end
       resource :contact, except: [:index, :new, :create]
       resource :schedule, only: [:show, :update]
       resources :commercials, except: [:show]

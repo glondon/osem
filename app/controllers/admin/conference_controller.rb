@@ -176,5 +176,35 @@ module Admin
         format.json { render json: @conference.to_json }
       end
     end
+
+    def roles
+      @user = User.new
+      @roles = {}
+      Role::ACTIONABLES.each do |role|
+        get_role = Role.where(name: role.parameterize.underscore, resource: @conference).first
+        get_role.blank? ? @roles[role] = [] : @roles[role] = get_role.users
+      end
+
+      if params[:button] == 'Add User'
+        user = User.find_by(email: params[:user][:email])
+        role = params[:role].parameterize.underscore.to_sym
+        user.add_role role, @conference
+
+        respond_to do |format|
+          format.html
+          format.js
+        end
+      end
+    end
+
+    def remove_roles
+      user = User.find(params[:user])
+      role = Role.where(name: params[:role].parameterize.underscore, resource: @conference).first
+      role = role.name.to_sym
+
+      if user.revoke role, @conference
+        redirect_to roles_admin_conference_path(@conference.short_title)
+      end
+    end
   end
 end
