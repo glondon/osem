@@ -20,6 +20,9 @@ gem 'omniauth-facebook'
 gem 'omniauth-openid'
 gem 'omniauth-google-oauth2'
 
+# Use rolify to set roles
+gem 'rolify'
+
 # Use cancancan as authorization framework
 gem 'cancancan'
 

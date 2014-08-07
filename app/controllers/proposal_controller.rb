@@ -1,16 +1,29 @@
 class ProposalController < ApplicationController
   before_filter :verify_user, except: [:show]
-  before_action :set_conference, only: [:show]
-  before_action :set_event, only: [:show, :edit, :update, :destroy, :confirm, :restart]
+  load_resource :conference, find_by: :short_title
+  load_and_authorize_resource :event, parent: false
+  before_filter :setup
+
+  def setup
+    @user = current_user if current_user
+    @url = conference_proposal_index_path(@conference.short_title)
+    @event_types = @conference.event_types
+  end
 
   def index
     @events = current_user.proposals(@conference)
   end
 
-  def show
-    authorize! :show, @event
-    # FIXME: We should show more than the first speaker
-    @speaker = @event.speakers.first || @event.submitter
+  def destroy
+    if @event
+      @event.withdraw
+      @event.save
+      redirect_to(conference_proposal_index_path(conference_id: @conference.short_title),
+                  alert: 'Proposal withdrawn.')
+    else
+      redirect_to(conference_proposal_index_path(conference_id: @conference.short_title),
+                  alert: 'Error! Could not find proposal!')
+    end
   end
 
   def new
@@ -128,13 +141,28 @@ class ProposalController < ApplicationController
                 notice: 'The proposal was confirmed.')
   end
 
-  def restart
-    authorize! :update, @event
-    @url = conference_proposal_path(@conference.short_title, params[:id])
-    
-    begin
-      @event.restart
-    rescue Transitions::InvalidTransition
+  def show
+    @speaker = @event.speakers.first || @event.submitter
+  end
+
+  def confirm
+    if @event.transition_possible? :confirm
+      begin
+        @event.confirm!
+      rescue InvalidTransition => e
+        redirect_to(conference_proposal_index_path(conference_id: @conference.short_title),
+                    alert: "Event was NOT confirmed: #{e.message}")
+        return
+      end
+
+      if !@conference.user_registered?(current_user)
+        redirect_to(conference_register_path(@conference.short_title),
+                    notice: 'Event was confirmed. Please register to attend the conference.')
+        return
+      end
+      redirect_to(conference_proposal_index_path(conference_id: @conference.short_title),
+                  notice: 'Event was confirmed.')
+    else
       redirect_to(conference_proposal_index_path(conference_id: @conference.short_title),
                   error: "The proposal can't be re-submitted.")
       return
