@@ -2,8 +2,7 @@ require 'spec_helper'
 feature User do
   # It is necessary to use bang version of let to build roles before user
   let!(:participant_role) { create(:participant_role) }
-  let!(:organizer_conference_1_role) { create(:organizer_conference_1_role) }
-  let(:organizer) { create(:organizer_conference_1) }
+  let(:admin) { create(:admin) }
 
   shared_examples 'organizer ability' do |_user|
     scenario 'deletes a user', feature: true, js: true do
@@ -21,7 +20,7 @@ feature User do
     end
     scenario 'can modify roles', feature: true, js: true do
       @user = create(:user)
-      sign_in(organizer)
+      sign_in(admin)
       visit admin_users_path
       find("#user-modify-role-#{@user.id}").click
       if find("#user-role-selection-#{@user.id}").visible?

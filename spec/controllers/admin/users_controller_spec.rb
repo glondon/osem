@@ -1,18 +1,16 @@
 require 'spec_helper'
 describe Admin::UsersController do
-  let!(:organizer_role) { create(:organizer_conference_1_role ) }
-  let!(:participant_role) { create(:participant_role) }
-  let(:organizer) { create(:organizer_conference_1) }
+  let(:admin) { create(:admin) }
   let(:user) { create(:user) }
   before(:each) do
-    sign_in(organizer)
+    sign_in(admin)
   end
   describe 'GET #index' do
     it 'populates an array of users' do
       user1 = create(:user, email: 'gopesh.7500@gmail.com')
       user2 = create(:user, email: 'gopesh_750@gmail.com')
       get :index
-      expect(assigns(:users)).to match_array([user, organizer, user1, user2])
+      expect(assigns(:users)).to match_array([user, admin, user1, user2])
     end
     it 'renders index template' do
       get :index

@@ -7,7 +7,7 @@ describe Admin::ConferenceController do
   let!(:participant_role) { create(:participant_role) }
   let!(:organizer_role) { create(:organizer_conference_1_role, resource_id: conference.id) }
 
-  let(:organizer) { create(:organizer_conference_1, is_admin: true) }
+  let(:organizer) { create(:user, role_ids: organizer_role.id, is_admin: true) }
   let(:participant) { create(:participant) }
 
   shared_examples 'access as administration' do
@@ -280,7 +280,7 @@ describe Admin::ConferenceController do
       sign_in(participant)
     end
 
-    it_behaves_like 'access as participant or guest', :root_path, 'You are not authorized to access this page.'
+    it_behaves_like 'access as participant or guest', :root_path, 'You are not authorized to access this area!'
 
   end
 

@@ -1,7 +1,6 @@
 class Admin::CommercialsController < ApplicationController
-  before_action :set_conference
-  before_action :set_commercial, only: [:edit, :update, :destroy]
-
+  load_and_authorize_resource :conference, find_by: :short_title
+  load_and_authorize_resource through: :conference
   def index
     @commercials = @conference.commercials
   end
@@ -41,14 +40,6 @@ class Admin::CommercialsController < ApplicationController
   end
 
   private
-
-  def set_commercial
-    @commercial = @conference.commercials.find(params[:id])
-  end
-
-  def set_conference
-    @conference = Conference.find_by(short_title: params[:conference_id])
-  end
 
   def commercial_params
     #params.require(:commercial).permit(:commercial_id, :commercial_type)

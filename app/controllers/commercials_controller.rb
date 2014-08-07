@@ -1,7 +1,7 @@
 class CommercialsController < ApplicationController
-  before_action :set_conference
+  load_and_authorize_resource :conference, find_by: :short_title
   before_action :set_event
-  before_action :set_commercial, only: [:edit, :update, :destroy]
+  load_and_authorize_resource through: @event
 
   def new
     @commercial = @event.commercials.build
@@ -42,10 +42,6 @@ class CommercialsController < ApplicationController
 
   def set_commercial
     @commercial = @event.commercials.find(params[:id])
-  end
-
-  def set_conference
-    @conference = Conference.find_by(short_title: params[:conference_id])
   end
 
   def set_event

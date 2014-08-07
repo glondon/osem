@@ -85,6 +85,8 @@ class Ability
         can :manage, SupporterLevel, conference_id: conf_ids_for_organizer
         # SupporterRegistration
         can :manage, Target, conference_id: conf_ids_for_organizer
+        can :manage, Commercial
+        can :manage, Contact, conference_id: conf_ids_for_organizer
       end
     end
   end
