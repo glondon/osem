@@ -83,6 +83,7 @@ class Ability
     # the user can also edit the schedule and that
     # the user can also vote
     can :manage, Event, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+    can :create, Event
     can :manage, CallForPapers, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, EventType, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, Track, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
@@ -126,6 +127,8 @@ class Ability
     can :manage, Event do |event|
       event.event_users.where(:user_id => user.id).present?
     end
+
+    can :create, Event
 
     can :manage, EventAttachment do |ea|
       Event.find(ea.event_id).event_users.where(user_id: user.id).present?
