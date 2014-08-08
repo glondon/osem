@@ -191,7 +191,7 @@ describe Admin::ConferenceController do
 
       context 'no conferences' do
         it 'redirect to new conference' do
-          sign_in create(:admin))
+          sign_in create(:admin)
           get :index
           expect(response).to redirect_to(redirect_to new_admin_conference_path)
         end

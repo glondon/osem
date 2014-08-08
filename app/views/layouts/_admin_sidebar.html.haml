@@ -48,7 +48,7 @@
       = link_to(admin_conference_schedule_path(@conference.short_title), target: '_blank') do
         %span.glyphicon.glyphicon-calendar
         Schedule
-  - if can? :update, @conference
+  - if can? :update, @conference.campaigns.build
     %li{class: active_nav_li(admin_conference_campaigns_path(@conference.short_title))}
       = link_to(admin_conference_campaigns_path(@conference.short_title)) do
         %span.glyphicon.glyphicon-bullhorn
