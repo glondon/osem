@@ -179,32 +179,38 @@ module Admin
 
     def roles
       @user = User.new
+      @roles = set_roles
+    end
+
+    def add_user
+      user = User.find_by(email: params[:user][:email])
+      role = params[:role].parameterize.underscore.to_sym
+      user.add_role role, @conference
+
+      @roles = set_roles
+      render 'roles', formats: [:js]
+    end
+
+    def remove_user
+      user = User.find(params[:user])
+      role = Role.where(name: params[:role].parameterize.underscore, resource: @conference).first
+      role = role.name.to_sym
+      user.revoke role, @conference
+
+      @roles = set_roles
+      render 'roles', formats: [:js]
+    end
+
+    protected
+
+    def set_roles
       @roles = {}
       Role::ACTIONABLES.each do |role|
         get_role = Role.where(name: role.parameterize.underscore, resource: @conference).first
         get_role.blank? ? @roles[role] = [] : @roles[role] = get_role.users
       end
 
-      if params[:button] == 'Add User'
-        user = User.find_by(email: params[:user][:email])
-        role = params[:role].parameterize.underscore.to_sym
-        user.add_role role, @conference
-
-        respond_to do |format|
-          format.html
-          format.js
-        end
-      end
-    end
-
-    def remove_roles
-      user = User.find(params[:user])
-      role = Role.where(name: params[:role].parameterize.underscore, resource: @conference).first
-      role = role.name.to_sym
-
-      if user.revoke role, @conference
-        redirect_to roles_admin_conference_path(@conference.short_title)
-      end
+      @roles
     end
   end
 end

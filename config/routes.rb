@@ -14,8 +14,8 @@ Osem::Application.routes.draw do
     resources :conference do
       member do
         get :roles
-        post :roles
-        delete :remove_roles
+        post :add_user
+        delete :remove_user
 
       end
       resource :contact, except: [:index, :new, :create]
