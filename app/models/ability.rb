@@ -43,6 +43,7 @@ class Ability
   end
 
   def user_with_roles(user)
+    signed_in(user)
     conf_ids_for_organizer = []
     venue_ids_for_organizer = []
     conf_ids_for_cfp = []
@@ -129,6 +130,7 @@ class Ability
     end
 
     can :create, Event
+    can :manage, Commercial ###
 
     can :manage, EventAttachment do |ea|
       Event.find(ea.event_id).event_users.where(user_id: user.id).present?

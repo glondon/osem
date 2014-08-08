@@ -5,9 +5,9 @@ feature User do
   let!(:organizer_conference_1_role) { create(:organizer_conference_1_role) }
   let(:admin) { create(:admin) }
 
-  shared_examples 'organizer ability' do |_user|
+  shared_examples 'organizer ability' do
     scenario 'deletes a user', feature: true, js: true do
-      sign_in(_user)
+      sign_in(admin)
       visit admin_users_path
       expected_count = User.count - 1
       page.all('btn btn-primary btn-danger') do

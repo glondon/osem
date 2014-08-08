@@ -10,10 +10,10 @@ feature Event do
              feature: true, js: true do
 
       organizer = create(:organizer_conference_1, email: 'admin@example.com')
-      participant = create(:participant, email: 'participant@example.com')
+      participant = create(:participant, email: 'participant@example.com', biography: "")
       expected_count = Event.count + 1
       conference = create(:conference)
-      conference.call_for_papers = create(:call_for_papers, start_date: Date.today, end_date: Date.today + 1)
+      conference.call_for_papers = create(:call_for_papers)
       conference.email_settings = create(:email_settings)
       conference.event_types = [create(:event_type)]
 
@@ -36,7 +36,7 @@ feature Event do
       click_button 'Create Event'
       expect(flash).to eq('Event was successfully submitted. You should register for the conference now.')
 
-      expect(current_path).to eq(register_conference_path(conference.short_title))
+      expect(current_path).to eq(conference_register_path(conference.short_title))
 
       expect(Event.count).to eq(expected_count)
 
