@@ -153,9 +153,6 @@ describe 'User' do
 #       it{ should be_able_to(:manage, conference3.questions.new) }
 #       it{ should_not be_able_to(:manage, conference4.questions.new) }
 #       it{ should_not be_able_to(:manage, conference5.questions.new) }
-
-
-
     end
   end
 end

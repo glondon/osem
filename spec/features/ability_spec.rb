@@ -2,26 +2,25 @@ require 'spec_helper'
 
 feature 'Display menu properly' do
   # It is necessary to use bang version of let to build roles before user
-  let!(:participant_role) { create(:participant_role) }
-  let!(:organizer_conference_1_role) { create(:organizer_conference_1_role) }
-  let!(:conference1) { create(:conference) } # user is organizer
-  let!(:conference2) { create(:conference) } # user is cfp
-  let!(:conference3) { create(:conference) } # user is info_desk
-  let!(:conference4) { create(:conference) } # user is volunteer coordinator
-  let!(:conference5) { create(:conference) } # user has no role
-  let(:role_organizer) { create(:role, name: 'organizer', resource: conference1) }
+  let(:conference1) { create(:conference) } # user is organizer
+  let(:conference2) { create(:conference) } # user is cfp
+  let(:conference3) { create(:conference) } # user is info_desk
+  let(:conference4) { create(:conference) } # user is volunteer coordinator
+  let(:conference5) { create(:conference) } # user has no role
+
+  let(:role_organizer) { create(:role, name: 'organizer', resource_type: 'Conference', resource_id: conference1.id) }
   let(:role_cfp) { create(:role, name: 'cfp', resource: conference2) }
   let(:role_info_desk) { create(:role, name: 'info_desk', resource: conference3) }
   let(:role_volunteer_coordinator) { create(:role, name: 'volunteer_coordinator', resource: conference4) }
+
   let(:user) { create(:user, role_ids: [role_cfp.id, role_organizer.id, role_cfp.id, role_info_desk.id, role_volunteer_coordinator.id]) }
-  let(:someuser) { create(:user) }
-  let(:registration1) { create(:registration, user: someuser, conference_id: conference1.id) }
-  let(:registration2) { create(:registration, user: someuser, conference_id: conference2.id) }
-  sign_in create(user)
 
   scenario 'when user is organizer' do
-
+    sign_in user
     visit admin_conference_path(conference1.short_title)
+
+#     click_link 'SETTINGS'
+#     expect(current_path).to eq(edit_admin_conference_path(conference.short_title))
 
     expect(page.has_content?('SETTINGS')).to be true
     expect(page.has_content?('MANAGE')).to be true
@@ -40,10 +39,11 @@ feature 'Display menu properly' do
   end
 
   scenario 'when user is cfp' do
+    sign_in user
     visit admin_conference_path(conference2.short_title)
 
-    expect(page.has_content?('SETTINGS')).to be true
-    expect(page.has_content?('MANAGE')).to be false
+    expect(page.has_content?('SETTINGS')).to be false
+    expect(page.has_content?('MANAGE')).to be true
     expect(page.has_content?('Registrations')).to be false
     expect(page.has_content?('Events')).to be true
     expect(page.has_content?('Schedule')).to be true
@@ -59,10 +59,11 @@ feature 'Display menu properly' do
   end
 
   scenario 'when user is info desk' do
+    sign_in user
     visit admin_conference_path(conference3.short_title)
 
-    expect(page.has_content?('SETTINGS')).to be true
-    expect(page.has_content?('MANAGE')).to be false
+    expect(page.has_content?('SETTINGS')).to be false
+    expect(page.has_content?('MANAGE')).to be true
     expect(page.has_content?('Registrations')).to be true
     expect(page.has_content?('Events')).to be false
     expect(page.has_content?('Schedule')).to be false
@@ -78,10 +79,11 @@ feature 'Display menu properly' do
   end
 
   scenario 'when user is volunteer coordinator' do
-    visit admin_conference_path(conference3.short_title)
+    sign_in user
+    visit admin_conference_path(conference4.short_title)
 
-    expect(page.has_content?('SETTINGS')).to be true
-    expect(page.has_content?('MANAGE')).to be false
+    expect(page.has_content?('SETTINGS')).to be false
+    expect(page.has_content?('MANAGE')).to be true
     expect(page.has_content?('Registrations')).to be false
     expect(page.has_content?('Events')).to be false
     expect(page.has_content?('Schedule')).to be false
@@ -95,8 +97,4 @@ feature 'Display menu properly' do
     expect(page.has_content?('Questions')).to be false
     expect(page.has_content?('Commercials')).to be false
   end
-
-#   describe 'organizer' do
-#     it_behaves_like 'add and update cfp', :organizer_conference_1
-#   end
 end
