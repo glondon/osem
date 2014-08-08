@@ -8,7 +8,7 @@ feature 'Display menu properly' do
   let(:conference4) { create(:conference) } # user is volunteer coordinator
   let(:conference5) { create(:conference) } # user has no role
 
-  let(:role_organizer) { create(:role, name: 'organizer', resource_type: 'Conference', resource_id: conference1.id) }
+  let(:role_organizer) { create(:role, name: 'organizer', resource: conference1) }
   let(:role_cfp) { create(:role, name: 'cfp', resource: conference2) }
   let(:role_info_desk) { create(:role, name: 'info_desk', resource: conference3) }
   let(:role_volunteer_coordinator) { create(:role, name: 'volunteer_coordinator', resource: conference4) }
