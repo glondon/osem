@@ -58,7 +58,6 @@ module Admin
     end
 
     def new
-      @conference = Conference.new
     end
 
     def create

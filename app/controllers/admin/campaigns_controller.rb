@@ -9,8 +9,7 @@ module Admin
     end
 
     def create
-      @campaign = @conference.campaigns.new(params[:campaign])
-      @campaign.conference_id = @conference.id
+      @campaign.attributes = params[:campaign]
 
       if @conference.save
         redirect_to(admin_conference_campaigns_path(conference_id: @conference.short_title),
@@ -23,7 +22,6 @@ module Admin
     end
 
     def new
-      @campaign = @conference.campaigns.new
     end
 
     def edit

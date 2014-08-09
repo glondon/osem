@@ -1,7 +1,8 @@
 require 'spec_helper'
 
 describe ConferenceController do
-  let(:conference) { create(:conference) }
+  let(:conference) { create(:conference, make_conference_public: true) }
+
   describe 'GET #show' do
     context 'conference made public' do
       it 'assigns the requested conference to conference' do

@@ -1,13 +1,10 @@
 require 'spec_helper'
-feature User do
-  # It is necessary to use bang version of let to build roles before user
-  let!(:participant_role) { create(:participant_role) }
-  let!(:organizer_conference_1_role) { create(:organizer_conference_1_role) }
-  let(:admin) { create(:admin) }
 
-  shared_examples 'organizer ability' do
+feature User do
+
+  shared_examples 'admin ability' do
     scenario 'deletes a user', feature: true, js: true do
-      sign_in(admin)
+      sign_in(create(:admin))
       visit admin_users_path
       expected_count = User.count - 1
       page.all('btn btn-primary btn-danger') do
@@ -19,23 +16,9 @@ feature User do
       end
       sign_out
     end
-    scenario 'can modify roles', feature: true, js: true do
-      @user = create(:user)
-      sign_in(admin)
-      visit admin_users_path
-      find("#user-modify-role-#{@user.id}").click
-      if find("#user-role-selection-#{@user.id}").visible?
-        page.find('#user_role_ids').find(:xpath, 'option[2]').select_option do
-          find('#user_submit_action').click
-          expect(flash).to eq("Updated #{@user.email}")
-          expect(@user.role_ids).to match_array([2])
-        end
-      end
-      sign_out
-    end
   end
 
-  describe 'organizer' do
-    it_behaves_like 'organizer ability', :admin
+  describe 'admin' do
+    it_behaves_like 'admin ability', :admin
   end
 end

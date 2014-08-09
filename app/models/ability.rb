@@ -34,7 +34,7 @@ class Ability
       guest(user)
     else
       roles = Role::ACTIONABLES.map {|i| i.parameterize.underscore}
-      if (user.roles.pluck(:name) & roles).empty? && !user.is_admin# User has no roles
+      if (user.roles.pluck(:name) & roles).empty? && !user.is_admin # User has no roles
         signed_in(user)
       else
         user_with_roles(user)
@@ -72,7 +72,7 @@ class Ability
     # User with role
     can :manage, User if user.is_admin # ??? || (user.has_role? :organizer, :any)
     can [:new, :create], Conference if user.is_admin
-    can [:index, :show], Conference
+    can [:index, :show, :gallery_photos], Conference
     can :manage, Conference, id: conf_ids_for_organizer
     can :manage, Venue, id: venue_ids_for_organizer
     can :index, Venue, id: venue_ids_for_cfp
@@ -97,15 +97,15 @@ class Ability
     can :manage, Sponsor, conference_id: conf_ids_for_organizer
     can :manage, SponsorshipLevel, conference_id: conf_ids_for_organizer
     can :manage, SupporterLevel, conference_id: conf_ids_for_organizer
-    # SupporterRegistration
     can :manage, Target, conference_id: conf_ids_for_organizer
     can :manage, Commercial ###
     can :manage, Contact, conference_id: conf_ids_for_organizer
+    can :manage, Campaign, conference_id: conf_ids_for_organizer
   end
 
   def guest(user)
     ## Abilities for everyone, even guests (not logged in users)
-    can :show, Conference do |conference|
+    can [:show, :gallery_photos], Conference do |conference|
       conference.make_conference_public == true
     end
 

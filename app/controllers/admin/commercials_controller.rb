@@ -1,6 +1,7 @@
 class Admin::CommercialsController < ApplicationController
   load_and_authorize_resource :conference, find_by: :short_title
   load_and_authorize_resource through: :conference
+
   def index
     @commercials = @conference.commercials
   end

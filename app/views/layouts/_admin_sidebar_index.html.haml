@@ -16,7 +16,7 @@
               %span.glyphicon.glyphicon-cog
               Manage
               = conference.short_title
-      - if can? :create, Conference
+      - if current_user.is_admin
         %li
           = link_to(new_admin_conference_path) do
             %span.glyphicon.glyphicon-plus
