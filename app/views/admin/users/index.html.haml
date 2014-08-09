@@ -18,7 +18,7 @@
           %th
             %b Name
           %th
-            %b # of Conference Registrations
+            %b Attended Conferences
           %th
             %b Roles
           %th
@@ -38,13 +38,12 @@
             %td
               = user.name
             %td
-              = user.registrations.count
+              = user.registrations.where(attended: true).count
             %td
-              - if can? :update, Role
-                = link_to "#{ user.roles.present? ? (user.roles.map { |role| "#{ role.name.titleize }(#{ role.resource_type.constantize.find(role.resource_id).short_title })" }.join ', ') : 'Add Role'}", "#", "data-toggle" => "modal", "data-target" => "#user-role-selection-#{user.id}",id: "user-modify-role-#{user.id}"
-
-              - else
-                = user.roles.map { |role| "#{ role.name.capitalize } for #{ role.resource_type.constantize.find(role.resource_id).short_title }" }.join ', '
+              - unless user.show_roles.blank?
+                = user.show_roles.first(2).map { |x| x[0].titleize + ' ' + x[1] }.join ', '
+                - if user.show_roles.count > 2
+                  = '...'
             - if can? :show, user
               %td
                 = link_to "View", admin_user_path(user), class: 'btn btn-success'

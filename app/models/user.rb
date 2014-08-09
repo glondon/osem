@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   has_many :openids
 
   attr_accessible :email, :password, :password_confirmation, :remember_me, :role_id, :role_ids,
-                  :name, :email_public, :biography, :nickname, :affiliation
+                  :name, :email_public, :biography, :nickname, :affiliation, :is_admin
 
   has_many :event_users, dependent: :destroy
   has_many :events, -> { uniq }, through: :event_users
@@ -54,6 +54,18 @@ class User < ActiveRecord::Base
 
   def setup_role
     self.is_admin = true if User.count == 0
+  end
+
+  # Gets the roles of the user, groups them by role.name and returns the resource(s) of each role
+  # ====Returns
+  # * +Hash+ * ->  e.g. 'organizer' =>  "(conf1, conf2)"
+  def show_roles
+    result = {}
+    Role::ACTIONABLES.each do |role|
+      resources = self.roles.where(name: role.parameterize.underscore).map{ |myrole| Conference.find(myrole.resource_id).short_title }.join ', '
+      result[role.parameterize.underscore] = "(#{ resources })" unless resources.blank?
+    end
+    result
   end
 
   def self.prepare(params)
