@@ -4,9 +4,10 @@ require 'cancan/matchers'
 describe 'User' do
   describe 'Abilities' do
     subject(:ability){ Ability.new(user) }
+    let!(:first_user) { create(:user) } # automatically becomes admin
     let(:user){ nil }
     let(:conference_not_public) { create(:conference, make_conference_public: false) }
-    let(:conference_public) { create(:conference)}
+    let(:conference_public) { create(:conference, make_conference_public: true)}
     let(:event_confirmed) { create(:event, state: 'confirmed') }
     let(:someevent) { create(:event) }
 
@@ -30,7 +31,6 @@ describe 'User' do
       let(:user) { create(:participant) }
       let(:registration1) { create(:registration, conference: conference_public, user: user) }
       let(:registration2) { create(:registration, conference: conference_not_public, user: user) }
-
 
       it{ should be_able_to(:create, Event) }
       it{ should be_able_to(:index, Event) }

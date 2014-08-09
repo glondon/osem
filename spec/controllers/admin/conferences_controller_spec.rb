@@ -4,8 +4,9 @@ describe Admin::ConferenceController do
 
   # It is necessary to use bang version of let to build roles before user
   let(:conference) { create(:conference) }
+  let!(:first_user) { create(:user) }
   let!(:participant_role) { create(:participant_role) }
-  let!(:organizer_role) { create(:organizer_conference_1_role, resource_id: conference.id) }
+  let!(:organizer_role) { create(:role, name: 'organizer', resource: conference) }
 
   let(:organizer) { create(:user, role_ids: organizer_role.id, is_admin: true) }
   let(:participant) { create(:participant) }
@@ -191,9 +192,12 @@ describe Admin::ConferenceController do
 
       context 'no conferences' do
         it 'redirect to new conference' do
+          Conference.all.each do |c|
+            c.destroy
+          end
           sign_in create(:admin)
           get :index
-          expect(response).to redirect_to(redirect_to new_admin_conference_path)
+          expect(response).to redirect_to new_admin_conference_path
         end
       end
     end

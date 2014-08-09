@@ -43,7 +43,6 @@ class Ability
   end
 
   def user_with_roles(user)
-    signed_in(user)
     conf_ids_for_organizer = []
     venue_ids_for_organizer = []
     conf_ids_for_cfp = []
@@ -69,6 +68,7 @@ class Ability
 
     conference_ids = conf_ids_for_organizer + conf_ids_for_cfp + conf_ids_for_info_desk + conf_ids_for_volunteer_coordinator
 
+    signed_in(user) # Inherit abilities from signed user
     # User with role
     can :manage, User if user.is_admin # ??? || (user.has_role? :organizer, :any)
     can [:new, :create], Conference if user.is_admin
@@ -130,7 +130,9 @@ class Ability
     end
 
     can :create, Event
-    can :manage, Commercial ###
+    can :manage, Commercial do |commercial|
+      commercial.commercialable_type = 'Event'
+    end
 
     can :manage, EventAttachment do |ea|
       Event.find(ea.event_id).event_users.where(user_id: user.id).present?
