@@ -178,38 +178,44 @@ module Admin
 
     def roles
       @user = User.new
-      @roles = set_roles
+      @roles = Role::ACTIONABLES + Role::LABELS
+
+      params[:user] ? (@selected = params[:user][:roles]) : (@selected = 'Organizer')
+      @selection = @selected.parameterize.underscore
+      @role = Role.where(name: @selection, resource: @conference)
+      @role_users = get_users(@selection)
     end
 
     def add_user
       user = User.find_by(email: params[:user][:email])
-      role = params[:role].parameterize.underscore.to_sym
-      user.add_role role, @conference
+      @selected = params[:role]
+      @selection = @selected.parameterize.underscore
+      user.add_role @selection.to_sym, @conference
 
-      @roles = set_roles
+      @roles = get_users(@selection)
       render 'roles', formats: [:js]
     end
 
     def remove_user
       user = User.find(params[:user])
-      role = Role.where(name: params[:role].parameterize.underscore, resource: @conference).first
+      @selected = params[:role]
+      @selection = @selected.parameterize.underscore
+      role = Role.where(name: @selection, resource: @conference).first
+      @role_users = get_users(@selection)
       role = role.name.to_sym
       user.revoke role, @conference
 
-      @roles = set_roles
       render 'roles', formats: [:js]
     end
 
     protected
 
-    def set_roles
-      @roles = {}
-      Role::ACTIONABLES.each do |role|
-        get_role = Role.where(name: role.parameterize.underscore, resource: @conference).first
-        get_role.blank? ? @roles[role] = [] : @roles[role] = get_role.users
-      end
+    def get_users(role)
+      @role_users = {}
+      get_role = Role.where(name: role, resource: @conference)
+      get_role.blank? ? @role_users[role] = get_role : @role_users[role] = get_role.first.users
 
-      @roles
+      @role_users
     end
   end
 end

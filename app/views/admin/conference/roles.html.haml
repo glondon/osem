@@ -1,5 +1,9 @@
 .row
-  .col-md-12
-    %h2 Roles (#{@roles.length}) for #{@conference.title}
-
+  .col-md-6
+    = semantic_form_for(:user, url: roles_admin_conference_path(@conference.short_title), remote: true) do |f|
+      %h4
+        = f.input :roles, collection: @roles, label: 'Show users for role: ', class: '`col-md-6'
+      = f.action :submit, as: :button, label: "Show Users", button_html: {value: 'Show', class: 'btn btn-success'}
+    = @role.first.description
+%hr
 = render partial: 'roles'
