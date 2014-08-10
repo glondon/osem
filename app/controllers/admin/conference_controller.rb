@@ -190,9 +190,10 @@ module Admin
       user = User.find_by(email: params[:user][:email])
       @selected = params[:role]
       @selection = @selected.parameterize.underscore
-      user.add_role @selection.to_sym, @conference
 
-      @roles = get_users(@selection)
+      @role_users = get_users(@selection)
+
+      user.add_role @selection.to_sym, @conference
       render 'roles', formats: [:js]
     end
 
@@ -201,10 +202,10 @@ module Admin
       @selected = params[:role]
       @selection = @selected.parameterize.underscore
       role = Role.where(name: @selection, resource: @conference).first
-      @role_users = get_users(@selection)
-      role = role.name.to_sym
-      user.revoke role, @conference
 
+      @role_users = get_users(@selection)
+
+      user.revoke role.name.to_sym, @conference
       render 'roles', formats: [:js]
     end
 

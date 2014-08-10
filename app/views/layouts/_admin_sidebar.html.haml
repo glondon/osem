@@ -16,7 +16,7 @@
               %span.glyphicon.glyphicon-cog
               Manage
               = conference.short_title
-      - if can? :create, Conference
+      - if (current_user.is_admin) || (current_user.has_role? :organizer, :any)
         %li
           = link_to(new_admin_conference_path) do
             %span.glyphicon.glyphicon-plus
@@ -118,3 +118,6 @@
       = link_to(admin_conference_questions_path(@conference.short_title)) do
         %span.glyphicon.glyphicon-question-sign
         Questions
+  - if can? :manage, @conference
+    %li{:class=> active_nav_li(roles_admin_conference_path(@conference.short_title))}
+      = link_to 'Roles', roles_admin_conference_path(@conference.short_title)

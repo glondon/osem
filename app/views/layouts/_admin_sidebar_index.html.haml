@@ -16,7 +16,7 @@
               %span.glyphicon.glyphicon-cog
               Manage
               = conference.short_title
-      - if current_user.is_admin
+      - if (current_user.is_admin) || (current_user.has_role? :organizer, :any)
         %li
           = link_to(new_admin_conference_path) do
             %span.glyphicon.glyphicon-plus

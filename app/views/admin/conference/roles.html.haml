@@ -4,6 +4,7 @@
       %h4
         = f.input :roles, collection: @roles, label: 'Show users for role: ', class: '`col-md-6'
       = f.action :submit, as: :button, label: "Show Users", button_html: {value: 'Show', class: 'btn btn-success'}
-    = @role.first.description
+    %p.text-muted
+      = @role.first.description
 %hr
 = render partial: 'roles'
