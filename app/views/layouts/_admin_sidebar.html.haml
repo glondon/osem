@@ -21,7 +21,7 @@
           = link_to(new_admin_conference_path) do
             %span.glyphicon.glyphicon-plus
             New Conference
-  - if can? :update, @conference
+  - if can? :index, @conference.commercials.build
     %hr
       %li{:class=> active_nav_li(admin_conference_commercials_path(@conference.short_title))}
         = link_to(admin_conference_commercials_path(@conference.short_title)) do

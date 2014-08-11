@@ -98,7 +98,10 @@ class Ability
     can :manage, SponsorshipLevel, conference_id: conf_ids_for_organizer
     can :manage, SupporterLevel, conference_id: conf_ids_for_organizer
     can :manage, Target, conference_id: conf_ids_for_organizer
-    can :manage, Commercial ###
+    can :manage, Commercial, commercialable_type: 'Conference', commercialable_id: conf_ids_for_organizer
+    can :index, Commercial, commercialable_type: 'Conference'
+    # Manage commercials for events that belong to a conference of which user is organizer
+    can :manage, Commercial, commercialable_type: 'Event', commercialable_id: Event.where(conference_id: conf_ids_for_organizer).pluck(:id)
     can :manage, Contact, conference_id: conf_ids_for_organizer
     can :manage, Campaign, conference_id: conf_ids_for_organizer
   end
@@ -118,21 +121,20 @@ class Ability
 
   def signed_in(user)
     guest(user) # Inherits abilities of guest
+
     # Conference Registration
     can :manage, Registration, user_id: user.id
 
     ## Proposals
-    # Users can edit their own proposals
-    # Can manage an event if the user is a speaker or a submitter of that event
+    # Users can manage their own proposals
+    can :manage, Event, id: user.events.pluck(:id)
 
-    can :manage, Event do |event|
-      event.event_users.where(:user_id => user.id).present?
-    end
-
-    can :create, Event
-    can :manage, Commercial do |commercial|
-      commercial.commercialable_type = 'Event'
-    end
+    # Submit proposals only for conferences that are not over yet
+    can :create, Event, conference_id: Conference.where('end_date >= ?', Date.today).pluck(:id)
+    # Users can manage their own commercials
+    can :manage, Commercial, commercialable_type: 'Event', commercialable_id: user.events.pluck(:id)
+    # View commercials of confirmed events
+    can :show, Commercial, commercialable_type: 'Event', commercialable_id: Event.where(state: 'confirmed').pluck(:id)
 
     can :manage, EventAttachment do |ea|
       Event.find(ea.event_id).event_users.where(user_id: user.id).present?

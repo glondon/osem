@@ -56,16 +56,21 @@ describe 'User' do
       let(:user2) { create(:participant) }
       let(:myevent) { create(:event, users: [user]) }
       let(:someevent) { create(:event, users: [user2]) }
+      let(:commercial_myevent) { create(:commercial, commercialable: myevent) }
+      let(:commercial_someevent) { create(:commercial, commercialable: someevent) }
 
       # Users are able to update and destroy their own events
       it{ should be_able_to(:update, myevent) }
       it{ should be_able_to(:destroy, myevent) }
       it{ should be_able_to(:manage, myevent) }
+      it{ should be_able_to(:create, myevent.commercials.new) }
+      it{ should be_able_to(:manage, commercial_myevent) }
 
       # Users are not able to update and destroy other users events
       it{ should_not be_able_to(:update, someevent) }
       it{ should_not be_able_to(:destroy, someevent) }
       it{ should_not be_able_to(:manage, someevent) }
+      it{ should_not be_able_to(:manage, commercial_someevent) }
     end
 
     context 'when user is an organizer' do
@@ -148,11 +153,11 @@ describe 'User' do
       it{ should_not be_able_to(:manage, conference4.events.new) }
       it{ should_not be_able_to(:manage, conference5.events.new) }
 
-#       it{ should be_able_to(:manage, conference1.questions.new) }
-#       it{ should_not be_able_to(:manage, conference2.questions.new) }
-#       it{ should be_able_to(:manage, conference3.questions.new) }
-#       it{ should_not be_able_to(:manage, conference4.questions.new) }
-#       it{ should_not be_able_to(:manage, conference5.questions.new) }
+      it{ should be_able_to(:manage, Question.new(conference_id: conference1.id)) }
+      it{ should_not be_able_to(:manage, Question.new(conference_id: conference2.id)) }
+      it{ should be_able_to(:manage, Question.new(conference_id: conference3.id)) }
+      it{ should_not be_able_to(:manage, Question.new(conference_id: conference4.id)) }
+      it{ should_not be_able_to(:manage, Question.new(conference_id: conference5.id)) }
     end
   end
 end
