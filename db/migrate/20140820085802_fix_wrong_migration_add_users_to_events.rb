@@ -3,6 +3,10 @@ class FixWrongMigrationAddUsersToEvents < ActiveRecord::Migration
     self.table_name = 'events'
   end
 
+  class TempUser < ActiveRecord::Base
+    self.table_name = 'users'
+  end
+
   class TempEventUser < ActiveRecord::Base
     self.table_name = 'event_users'
     belongs_to :temp_event
@@ -16,11 +20,11 @@ class FixWrongMigrationAddUsersToEvents < ActiveRecord::Migration
   end
 
   def change
-    user_deleted = User.find_by(email: 'deleted@localhost.osem')
+    user_deleted = TempUser.find_by(email: 'deleted@localhost.osem')
 
     TempEvent.all.each do |event|
       whodunnit = Version.find_by(item_type: 'Event', item_id: event.id, event: 'create').whodunnit
-      original_user = User.find_by(id: whodunnit)
+      original_user = TempUser.find_by(id: whodunnit)
 
       if original_user.blank?
         original_submitter = user_deleted
