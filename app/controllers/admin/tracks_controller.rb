@@ -20,9 +20,8 @@ module Admin
                     conference_id: @conference.short_title),
                     notice: 'Tracks were successfully updated.')
       else
-        redirect_to(admin_conference_tracks_path(
-                    conference_id: @conference.short_title),
-                    notice: 'Tracks update failed.')
+        flash[:error] = error: 'Tracks update failed.'
+        redirect_to admin_conference_tracks_path(conference_id: @conference.short_title)
       end
     end
   end

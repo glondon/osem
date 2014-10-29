@@ -13,9 +13,9 @@ module Admin
                     conference_id: @conference.short_title),
                     notice: 'Sponsorships were successfully updated.')
       else
-        redirect_to(admin_conference_sponsors_path(
-                    conference_id: @conference.short_title),
-                    alert: 'Sponsorships update failed.')
+        redirect_to admin_conference_sponsors_path(conference_id: @conference.short_title),
+                    error: "Sponsorships update failed.
+                            #{@conference.errors.full_messages.join('. ')}"
       end
     end
   end

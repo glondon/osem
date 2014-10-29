@@ -17,7 +17,7 @@ module Admin
         flash[:notice] = "Successfully updated Attended for #{@user.email}"
         redirect_to admin_conference_registrations_path(@conference.short_title)
       else
-        flash[:notice] = "Update Attended for #{@user.email} failed!" \
+        flash[:error] = "Update Attended for #{@user.email} failed!" \
                          "#{@registration.errors.full_messages.join('. ')}"
         redirect_to admin_conference_registrations_path(@conference.short_title)
       end
@@ -31,7 +31,7 @@ module Admin
         redirect_to admin_conference_registrations_path(@conference.short_title),
                     notice: 'Successfully updated registration!'
       else
-        flash[:alert] = "A error prohibited the Registration for #{@conference.title}: "\
+        flash[:error] = "An error prohibited the Registration for #{@conference.title}: "\
                         "#{@registration.errors.full_messages.join('. ')}."
         render :edit
       end
@@ -44,7 +44,7 @@ module Admin
                     notice: "Deleted registration for #{@user.name}!"
       else
         redirect_to(admin_conference_registrations_path(@conference.short_title),
-                    alert: 'You must be an admin to delete a registration.')
+                    error: 'You are not authorized to delete this registration.')
       end
     end
 

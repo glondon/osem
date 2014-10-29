@@ -17,7 +17,7 @@ module Admin
       else
         redirect_to(admin_conference_targets_path(
                     conference_id: @conference.short_title),
-                    alert: 'Targets update failed: ' \
+                    error: 'Targets update failed: ' \
                     "#{@conference.errors.full_messages.join('. ')}")
       end
     end

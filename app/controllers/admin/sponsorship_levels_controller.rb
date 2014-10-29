@@ -15,7 +15,8 @@ module Admin
       else
         redirect_to(admin_conference_sponsorship_levels_path(
                     conference_id: @conference.short_title),
-                    alert: 'Sponsorship levels update failed')
+                    error: "Sponsorship levels update failed:
+                            #{@conference.errors.full_messages.join('. ')}")
       end
     end
   end

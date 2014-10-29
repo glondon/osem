@@ -22,7 +22,7 @@ module Admin
       if @photo.save
         redirect_to admin_conference_photos_path, notice: 'Photo was successfully created.'
       else
-        flash[:alert] = "A error prohibited this Photo from being saved: #{@photo.errors.full_messages.join('. ')}."
+        flash[:error] = "An error prohibited this Photo from being saved: #{@photo.errors.full_messages.join('. ')}."
         render :new
       end
     end
@@ -32,15 +32,18 @@ module Admin
       if @photo.update(photo_params)
         redirect_to admin_conference_photos_path, notice: 'Photo was successfully updated.'
       else
-        flash[:alert] = "A error prohibited this Photo from being saved: #{@photo.errors.full_messages.join('. ')}."
+        flash[:error] = "An error prohibited this Photo from being saved: #{@photo.errors.full_messages.join('. ')}."
         render :edit
       end
     end
 
 # DELETE /admin/photos/1
     def destroy
-      @photo.destroy
-      redirect_to admin_conference_photos_path, notice: 'Photo was successfully destroyed.'
+      if @photo.destroy
+        redirect_to admin_conference_photos_path, notice: 'Photo was successfully destroyed.'
+      else
+        redirect_to admin_conference_photos_path, error: 'Photo could not be destroyed.'
+      end
     end
 
     private

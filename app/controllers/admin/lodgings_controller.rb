@@ -15,8 +15,8 @@ module Admin
         redirect_to(admin_conference_lodgings_path(conference_id: @conference.short_title),
                     notice: 'Lodgings were successfully updated.')
       else
-        redirect_to(admin_conference_lodgings_path(conference_id: @conference.short_title),
-                    notice: 'Updating lodgings failed!')
+        flash[:error] = "Updating lodgings failed: #{@venue.errors.full_messages.join('. ')}."
+        redirect_to admin_conference_lodgings_path(conference_id: @conference.short_title)
       end
     end
   end

@@ -16,16 +16,15 @@ module Admin
         redirect_to admin_conference_registration_period_path(@conference.short_title),
                     notice: 'Registration Period successfully updated.'
       else
-        flash[:alert] = "A error prohibited the Registration Period from being saved: #{@registration_period.errors.full_messages.join('. ')}."
+        flash[:error] = "An error prohibited the Registration Period from being saved:
+                         #{@registration_period.errors.full_messages.join('. ')}."
         render :new
       end
     end
 
-    def edit
-    end
+    def edit; end
 
-    def show
-    end
+    def show; end
 
     def update
       @registration_period.assign_attributes(registration_period)
@@ -36,7 +35,7 @@ module Admin
         redirect_to admin_conference_registration_period_path(@conference.short_title),
                     notice: 'Registration Period successfully updated.'
       else
-        flash[:alert] = 'A error prohibited the Registration Period from being saved: ' \
+        flash[:error] = 'An error prohibited the Registration Period from being saved: ' \
         "#{@registration_period.errors.full_messages.join('. ')}."
         render :edit
       end
