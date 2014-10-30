@@ -89,6 +89,44 @@ class User < ActiveRecord::Base
     user
   end
 
+  # Gets a user
+  # ====Returns
+  # true or false.
+  # FALSE (no deletion) if the user has voted on an event or has scheduled events in the past.
+  # TRUE (user deletion) if user has not voted on any event, or does not have submitted events,
+  #                      or does not have scheduled events in the past.
+  def can_delete?
+    result = false
+
+    # For all the events of the user, check if the event.start_time exists in the future
+    if self.events.map { |e| e.start_time }.all? { |x| x.blank? || x > DateTime.now }
+      result = true
+    end
+
+    if self.votes.present?
+      result false
+    end
+
+    return result
+  end
+
+  # Gets a user (we do not want to destroy everything about the user)
+  # ====Returns
+  # Substitutes user with the deleted_user for past events and votes
+  # Deletes events (unscheduled or scheduled in the future)
+  def remove_user_info(user)
+    # If user has no events, delete users
+    # If user has not scheduled events, delete user & delete events & notify admins of deletion(!)
+
+    # Deletes unscheduled/future events
+    user.events.each { |e| if e.start_time.blank? || e.start_time > DateTime.now; e.destroy; end}
+
+    deleted_user = User.find_by(email: 'deleted@localhost.osem')
+    # Substitutes our user with the deleted_user in the event_users join table.
+    # So that remaining events will always have associated users
+    event.event_users.each{ |eu| if eu.user == user; eu.user = deleted_user; end }
+  end
+
   def registered
     registrations = self.registrations
     if registrations.count == 0

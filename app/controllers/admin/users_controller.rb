@@ -30,8 +30,15 @@ module Admin
     def edit; end
 
     def destroy
-      @user.destroy
-      redirect_to admin_users_path, notice: 'User got deleted'
+      if @user.can_delete?
+        if @user.destroy && @user.events.each(&:destroy)
+          redirect_to admin_users_path, notice: 'User and events got deleted'
+        else
+          redirect_to admin_users_path, error: 'Could not delete user.'
+        end
+      else
+        remove_user_info(@user)
+      end
     end
   end
 end
