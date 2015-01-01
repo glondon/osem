@@ -32,15 +32,15 @@
   .col-sm-4.col-xs-4
     .dashbox.text-center
       %span.fa.fa-file-text.fa-lg
-      %span.fa.fa-lg
-        = @program_length
+      %span.my
+        =show_time(@program_length)
       %p
         %small
-          #{'Hour'.pluralize(@program_length)}
+          Content
         - if @new_reg
-          %span.label.label-success{title: "+#{@new_program_length} since you last logged in!"}
+          %span.label.label-success{title: "+#{show_time(@new_program_length)} since you last logged in!"}
             +
-            = @new_program_length
+            = show_time(@new_program_length)
 
 .row
   .col-md-12

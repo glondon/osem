@@ -112,7 +112,7 @@ module ApplicationHelper
 
     if h != 0
       if min != 0
-      "#{h} h #{min} min"
+      "#{h}h #{min}min"
       else
         "#{h} h"
       end
