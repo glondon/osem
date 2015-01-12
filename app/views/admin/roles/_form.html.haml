@@ -1,0 +1,20 @@
+.row
+  .col-md-12
+    %h2
+      - if @role.new_record?
+        New
+      Role
+      = @role.name.titleize if @role.name
+    - if @role.new_record?
+      %p.text-muted
+        The added role can only be used as a label and will not be associated with access rights
+        %br
+        Please note that if you add users for this role and then delete
+        %b all of them
+        , your role will be automatically deleted too
+.row
+  .col-md-8
+    = semantic_form_for @role, url: (@role.new_record? ? admin_conference_roles_path(@conference.short_title) : admin_conference_role_path(@conference.short_title, @role.name)) do |f|
+      = f.input :name
+      = f.input :description
+      = f.action :submit, as: :button, button_html: { class: 'btn btn-primary' }

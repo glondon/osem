@@ -129,7 +129,7 @@ class User < ActiveRecord::Base
   # * +Hash+ * ->  e.g. 'organizer' =>  "(conf1, conf2)"
   def get_roles
     result = {}
-    Role::ACTIONABLES.each do |role|
+    Role::ACTIONABLES.map { |r| r['name'] }.each do |role|
       resources = self.roles.where(name: role.parameterize.underscore).map{ |myrole| Conference.find(myrole.resource_id).short_title }.join ', '
       result[role.parameterize.underscore] = "(#{ resources })" unless resources.blank?
     end

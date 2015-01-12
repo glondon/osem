@@ -1,7 +1,6 @@
 module Admin
   class ConferenceController < Admin::BaseController
     load_and_authorize_resource :conference, find_by: :short_title
-    load_resource :user, only: [:remove_user]
 
     def index
       # Redirect to new form if there is no conference
@@ -167,42 +166,6 @@ module Admin
         format.html
         format.json { render json: @conference.to_json }
       end
-    end
-
-    def roles
-      @user = User.new
-      @roles = Role::ACTIONABLES + Role::LABELS
-
-      params[:user] ? (@selection = params[:user][:roles].parameterize.underscore) : (@selection = 'organizer')
-      @role_users = get_users(@selection)
-    end
-
-    def add_user
-      @user = User.find_by(email: params[:user][:email])
-      @selection = params[:role].parameterize.underscore
-      @user.add_role @selection.to_sym, @conference
-
-      @role_users = get_users(@selection)
-      render 'roles', formats: [:js]
-    end
-
-    def remove_user
-      @selection = params[:role]
-      @user.revoke @selection.to_sym, @conference
-
-      @role_users = get_users(@selection)
-      render 'roles', formats: [:js]
-    end
-
-    protected
-
-    def get_users(role_name)
-      @role_users = {}
-      # Initialize @role variable, so that view can show the role description
-      @role = Role.where(name: role_name, resource: @conference)
-      @role.blank? ? @role_users[role_name] = @role : @role_users[role_name] = @role.first.users
-
-      @role_users
     end
   end
 end
