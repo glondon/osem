@@ -1,0 +1,46 @@
+.row
+  .col-md-12
+    %h2 Roles
+
+  .col-md-6
+    %b Actionable roles
+    %br
+    - @actionables.each_with_index do |role, index|
+      = index + 1
+
+      %u
+        = link_to role['name'],
+          admin_conference_role_path(@conference.short_title, format_role(role['name'])),
+          remote: true
+
+      .text-muted
+        = role['description']
+
+  .col-md-6
+    %b Labels
+    - if can? :create, Role.new(resource: @conference)
+      = link_to 'New',
+        new_admin_conference_role_path(@conference.short_title),
+        class: 'btn btn-xs btn-primary'
+
+    %br
+    - @labels.each_with_index do |role, index|
+      = index + 1
+
+      - unless (role_record = Role.find_by(name: format_role(role), resource: @conference)).blank?
+        - if can? :edit, role_record
+          = link_to edit_admin_conference_role_path(@conference.short_title,
+                                                                  format_role(role)) do
+            %i{class: 'fa fa-edit'}
+
+      %u
+        = link_to role,
+          admin_conference_role_path(@conference.short_title, format_role(role)),
+          remote: true
+
+      .text-muted
+        = Role.get_description(role, @conference)
+
+  .col-md-12
+    #myroles
+      = render partial: 'roles'

@@ -124,8 +124,8 @@
       = link_to(admin_conference_emails_path(@conference.short_title)) do
         %span.fa.fa-envelope
         E-Mails
-  - if can? :manage, @conference
-    %li{:class=> active_nav_li(roles_admin_conference_path(@conference.short_title))}
-      = link_to(roles_admin_conference_path(@conference.short_title)) do
+  - if can? :index, Role.new(resource: @conference)
+    %li{:class=> active_nav_li(admin_conference_roles_path(@conference.short_title))}
+      = link_to(admin_conference_roles_path(@conference.short_title)) do
         %span.fa.fa-group
         Roles

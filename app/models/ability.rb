@@ -32,7 +32,7 @@ class Ability
     if user.new_record?
       guest
     else
-      roles = Role::ACTIONABLES.map {|i| i.parameterize.underscore}
+      roles = Role::ACTIONABLES.map { |r| r['name'].parameterize.underscore }
       if (user.roles.pluck(:name) & roles).empty? && !user.is_admin # User has no roles
         signed_in(user)
       else
@@ -58,6 +58,12 @@ class Ability
     # Ids of all the conferences for which the user has a 'volunteer_coordinator' role
     conf_ids_for_volunteer_coordinator =
         Conference.with_role(:volunteer_coordinator, user).pluck(:id) if user.has_role? :volunteer_coordinator, :any
+
+    conf_ids_for_actionable_roles = conf_ids_for_organizer +
+                                    conf_ids_for_cfp +
+                                    conf_ids_for_info_desk +
+                                    conf_ids_for_volunteer_coordinator
+    label_roles = Role::LABELS.map { |r| r['name'].parameterize.underscore }
 
     signed_in(user) # Inherit abilities from signed user
     # User with role
@@ -99,6 +105,20 @@ class Ability
     can :manage, CallForPaper, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, Venue, conference_id: conf_ids_for_organizer
     can :index, Venue, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+    # Abilities for Role (Conference resource)
+    can :index, Role
+    can :manage, Role do |role|
+      role.resource_type == 'Conference' && (conf_ids_for_organizer.include? role.resource_id)
+    end
+    can [ :add_user, :remove_user], Role do |role|
+      role.resource_type == 'Conference' &&
+      (Conference.with_role(role.name.parameterize.underscore.to_sym, user).pluck(:id).include? role.resource_id)
+    end
+    can :add_user, Role do |role|
+      role.resource_type == 'Conference' &&
+      (conf_ids_for_actionable_roles.include? role.resource_id) &&
+      (label_roles.include? role.name)
+    end
     can :manage, :all if user.is_admin
   end
 

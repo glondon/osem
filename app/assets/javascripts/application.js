@@ -34,6 +34,8 @@
 //= require osem-datepickers
 //= require osem-datatables
 //= require osem-tickets
+//= require unobtrusive_flash
+//= require unobtrusive_flash_bootstrap
 
 $(document).ready(function() {
     $('a[disabled=disabled]').click(function(event){
