@@ -6,7 +6,7 @@
     .form-inline
       = semantic_form_for :role, url: add_user_admin_conference_role_path(@conference.short_title, @selection), method: :patch, remote: true do |f|
 
-        = f.label "Select user to add role '#{@selection.humanize.titleize}':"
+        = f.label "Select user to add role #{@selection.humanize.titleize}:"
         %br
         .input-group
           = f.fields_for :user do |u|

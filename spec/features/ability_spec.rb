@@ -1,7 +1,6 @@
 require 'spec_helper'
 
 feature 'Has correct abilities' do
-  # It is necessary to use bang version of let to build roles before user
   let(:conference1) { create(:conference) } # user is organizer
   let(:conference2) { create(:conference) } # user is cfp
   let(:conference3) { create(:conference) } # user is info_desk
@@ -112,7 +111,7 @@ feature 'Has correct abilities' do
     expect(page).to have_link('Event Types', href: "/admin/conference/#{conference2.short_title}/event_types")
     expect(page).to have_link('Difficulty Levels', href: "/admin/conference/#{conference2.short_title}/difficulty_levels")
     expect(page).to_not have_link('Questions', href: "/admin/conference/#{conference2.short_title}/questions")
-    expect(page).to_not have_link('Roles', href: "/admin/conference/#{conference2.short_title}/roles")
+    expect(page).to have_link('Roles', href: "/admin/conference/#{conference2.short_title}/roles")
 
     visit edit_admin_conference_path(conference2.short_title)
     expect(current_path).to eq(root_path)
@@ -183,7 +182,7 @@ feature 'Has correct abilities' do
     expect(page).to_not have_link('Event types', href: "/admin/conference/#{conference3.short_title}/event_types")
     expect(page).to_not have_link('Difficulty levels', href: "/admin/conference/#{conference3.short_title}/difficulty_levels")
     expect(page).to have_link('Questions', href: "/admin/conference/#{conference3.short_title}/questions")
-    expect(page).to_not have_link('Roles', href: "/admin/conference/#{conference3.short_title}/roles")
+    expect(page).to have_link('Roles', href: "/admin/conference/#{conference3.short_title}/roles")
 
     visit edit_admin_conference_path(conference3.short_title)
     expect(current_path).to eq(root_path)
@@ -255,7 +254,7 @@ feature 'Has correct abilities' do
     expect(page).to_not have_link('Event Types', href: "/admin/conference/#{conference4.short_title}/event_types")
     expect(page).to_not have_link('Difficulty Levels', href: "/admin/conference/#{conference4.short_title}/difficulty_levels")
     expect(page).to_not have_link('Questions', href: "/admin/conference/#{conference4.short_title}/questions")
-    expect(page).to_not have_link('Roles', href: "/admin/conference/#{conference4.short_title}/roles")
+    expect(page).to have_link('Roles', href: "/admin/conference/#{conference4.short_title}/roles")
 
     visit edit_admin_conference_path(conference4.short_title)
     expect(current_path).to eq(root_path)
