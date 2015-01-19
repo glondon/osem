@@ -24,7 +24,7 @@ describe Admin::RolesController do
       it 'finds the correct role' do
         expect(assigns(:role)).to eq organizer_role
       end
-    end
+  end
 
     describe 'GET #show' do
       before(:each) do

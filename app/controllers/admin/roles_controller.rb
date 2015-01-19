@@ -11,8 +11,7 @@ module Admin
       @actionables = Role::ACTIONABLES
       @default_labels = Role::LABELS.map { |x| x['name'] }
       # Include roles from DB, except 'ACTIONABLES' and 'LABELS'
-      @custom_labels = Role.where(resource: @conference).map{
-        |x| x.name.titleize} -
+      @custom_labels = Role.where(resource: @conference).map{ |x| x.name.titleize } -
         Role::ACTIONABLES.map { |x| x['name']} -
         Role::LABELS.map { |x| x['name']} -
         ['Cfp'] # We need to individually extract due to abnormal case
@@ -39,6 +38,7 @@ module Admin
     end
 
     def show; end
+
     def edit; end
 
     def update

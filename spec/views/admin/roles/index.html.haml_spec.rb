@@ -17,7 +17,7 @@ describe 'admin/roles/index' do
 
   it 'renders index' do
     expect(rendered).to include(organizer_role.description)
-    expect(rendered).to include("Select user to add role organizer:")
+    expect(rendered).to include('Select user to add role organizer:')
     expect(rendered).to include('Select user')
     expect(rendered).to have_selector('table thead th:nth-of-type(1)', text: 'ID')
     expect(rendered).to have_selector('table thead th:nth-of-type(2)', text: 'Name')

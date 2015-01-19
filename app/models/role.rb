@@ -6,9 +6,17 @@ class Role < ActiveRecord::Base
 
   scopify
 
-  LABELS = {'name' => 'Attendee', 'description' => ''}, {'name' => 'Volunteer', 'description' => ''}, {'name' => 'Speaker', 'description' => ''}, {'name' => 'Sponsor', 'description' => ''}, {'name' => 'Press', 'description' => ''}, {'name' => 'Keynote Speaker', 'description' => ''}
+  LABELS = {'name' => 'Attendee', 'description' => ''},
+           {'name' => 'Volunteer', 'description' => ''},
+           {'name' => 'Speaker', 'description' => ''},
+           {'name' => 'Sponsor', 'description' => ''},
+           {'name' => 'Press', 'description' => ''},
+           {'name' => 'Keynote Speaker', 'description' => ''}
 
-  ACTIONABLES = {'name' => 'Organizer', 'description' => 'The organizer of the conference - has full access'}, {'name' => 'CfP', 'description' => 'Members of the CfP team'}, {'name' => 'Info Desk', 'description' => 'Members of the Info Desk team'}, {'name' => 'Volunteers Coordinator', 'description' => 'In charge of volunteers'}
+  ACTIONABLES = {'name' => 'Organizer', 'description' => 'The organizer of the conference - has full access'},
+                {'name' => 'CfP', 'description' => 'Members of the CfP team'},
+                {'name' => 'Info Desk', 'description' => 'Members of the Info Desk team'},
+                {'name' => 'Volunteers Coordinator', 'description' => 'In charge of volunteers'}
 
   validates :name, presence: true
 
@@ -25,7 +33,7 @@ class Role < ActiveRecord::Base
     if r
       return r.description
     else
-      return LABELS.find { |r| r['name'] == role}['description']
+      return LABELS.find { |l| l['name'] == role}['description']
     end
   end
 
