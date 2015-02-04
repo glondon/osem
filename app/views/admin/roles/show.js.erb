@@ -1,1 +1,7 @@
-$('#myroles').html("<%= escape_javascript(render partial: 'roles').html_safe %>");
+$(".alert").remove();
+$('#users').html("<%= escape_javascript(render partial: 'users').html_safe %>");
+$('.datatable').DataTable({
+  autoWidth: false,
+  pagingType: 'full_numbers',
+  "lengthMenu": [[25, 50, 100, -1], [25, 50, 100, "All"]]
+});
