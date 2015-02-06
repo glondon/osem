@@ -10,8 +10,7 @@
 
       %u
         = link_to role['name'],
-          admin_conference_role_path(@conference.short_title, format_role(role['name'])),
-          remote: true
+          admin_conference_role_path(@conference.short_title, format_role(role['name']))
 
       .text-muted
         = role['description']
@@ -23,7 +22,9 @@
         new_admin_conference_role_path(@conference.short_title),
         class: 'btn btn-xs btn-primary'
 
-    %br
+    .text-muted
+      Without defined permissions
+
     - @labels.each_with_index do |role, index|
       = index + 1
 
@@ -35,12 +36,7 @@
 
       %u
         = link_to role,
-          admin_conference_role_path(@conference.short_title, format_role(role)),
-          remote: true
+          admin_conference_role_path(@conference.short_title, format_role(role))
 
       .text-muted
         = Role.get_description(role, @conference)
-
-  .col-md-12
-    #myroles
-      = render partial: 'roles'

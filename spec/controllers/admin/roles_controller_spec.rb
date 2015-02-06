@@ -10,6 +10,8 @@ describe Admin::RolesController do
 
   let(:organizer) { create(:user, role_ids: organizer_role.id) }
   let(:organizer2) { create(:user, email: 'organizer2@email.osem', role_ids: organizer_role.id) }
+  let!(:user1) { create(:user) }
+  let!(:user2) { create(:user) }
 
   describe 'GET #index' do
       before(:each) do
@@ -52,27 +54,35 @@ describe Admin::RolesController do
     describe 'PATCH #add_user' do
       before(:each) do
         sign_in(admin)
-        @new_user = create(:user, email: 'new_user@email.osem')
         patch :add_user, conference_id: conference.short_title,
-                         role: { user: { email: 'new_user@email.osem' } },
+                         role: { user: { id: user1.id } },
                          id: 'organizer'
       end
 
       it 'finds correct user' do
-        expect(assigns(:user)).to eq @new_user
+        expect(assigns(:user)).to eq user1
       end
 
       it 'assigns role to user' do
-        expect(@new_user.roles).to eq [organizer_role]
+        expect(user1.roles).to eq [organizer_role]
+      end
+
+      it 'adds second user' do
+        patch :add_user, conference_id: conference.short_title,
+                         role: { user: { id: user2.id } },
+                         id: 'cfp'
+
+        cfp_role = Role.find_by(name: 'cfp', resource: conference)
+        expect(user2.roles).to eq [cfp_role]
       end
 
       it 'assigns second role to user' do
         patch :add_user, conference_id: conference.short_title,
-                         role: { user: { email: @new_user.email } },
+                         role: { user: { id: user1.id } },
                          id: 'cfp'
 
         cfp_role = Role.find_by(name: 'cfp', resource: conference)
-        expect(@new_user.roles).to eq [organizer_role, cfp_role]
+        expect(user1.roles).to eq [organizer_role, cfp_role]
       end
     end
 

@@ -1,0 +1,22 @@
+%h3 Users
+%table.table.table-striped.table-bordered.table-hover.datatable#users
+  %thead
+    %th ID
+    %th Name
+    %th Email
+  %tbody
+    - Role.get_users(@role).each do |user|
+      %tr
+        %td
+          = link_to remove_user_admin_conference_role_path(@conference.short_title,
+                                                            @selection,
+                                                            user_id: user.id),
+            method: :patch,
+            remote: true,
+            title: 'Remove user',
+            data: { confirm: "Are you sure you want to revoke role #{@selection} from user   #{user.email}" } do
+            %i{class: 'fa fa-times'}
+            = user.id
+          %td= user.name
+          %td= user.email
+

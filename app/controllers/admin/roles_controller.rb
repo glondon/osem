@@ -55,13 +55,18 @@ module Admin
     end
 
     def add_user
-      email = params[:role][:user][:email]
-      @user = User.find_by(email: email)
+      id = params[:role][:user][:id]
+      @user = User.find(id)
 
       if can? :add_user, Role.find_by(name: @selection, resource: @conference)
-        @user.add_role @selection.to_sym, @conference
+        if @user.roles.include? @role
+          flash[:warning] = 'User ' + @user.email + ' already has role ' + @selection.titleize
+        else
+          @user.add_role @selection.to_sym, @conference
+          flash[:success] = 'Successfully added role ' + @selection.titleize + ' to ' + @user.email
+        end
+
         set_selection # Reload role, to show the newly added userss
-        flash[:success] = 'Successfully added role ' + @selection.titleize + ' to ' + @user.email
       else
         flash[:error] = 'Could not add user. Check your privileges!'
       end
