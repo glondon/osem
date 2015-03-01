@@ -1,13 +1,11 @@
-= semantic_form_for(@event, :url => @url) do |f|
+= semantic_form_for(@event, url: @url) do |f|
   %section#basic
-  = f.inputs :name => "Session Information" do
+  = f.inputs name: "Session Information" do
     - if can? :update, @event or can? :create, @event
-      = f.input :title, :as => :string, :required => true
+      = f.input :title, as: :string, required: true
     - else
       Title: #{@event.title}
-      %br
-      %br
-    = f.input :subtitle, :as => :string
+    = f.input :subtitle, as: :string
   %section#details
     - if can? :update, @event or can? :create, @event
       = f.input :event_type_id, as: :select,
@@ -18,15 +16,18 @@
       Event type: #{@event.event_type.title}
 
     - if current_user.has_any_role? :admin, { name: :organizer, resource: @conference }, { name: :cfp, resource: @conference }
-      = f.label :is_highlight
-      %br
+      = f.label :is_highlight, class: 'label-block'
       = f.check_box :is_highlight, class: 'switch-checkbox', data: { size: "small" }
+      %br
+      %br
 
+    = f.input :difficulty_level, as: :select, collection: @conference.difficulty_levels, include_blank: '(Please select)' if @conference.difficulty_levels.any?
+    = f.label :require_registration, class: 'label-block'
+    = f.check_box :require_registration, class: 'switch-checkbox', data: { size: 'small' }
     %br
-    = f.input :difficulty_level, :as => :select, :collection => @conference.difficulty_levels, :include_blank => "(Please select)" if @conference.difficulty_levels.any?
-    = f.input :require_registration
-    = f.input :abstract, :input_html => {:rows => 5, :class => "span11"},
-      :required => true, :label => "Session Abstract"
+    %br
+
+    = f.input :abstract, input_html: {rows: 5}, required: true, label: 'Session Abstract'
     You have used
     %span#abstract-count #{@event.abstract_word_count}
     words.  Abstracts must be between
@@ -38,18 +39,18 @@
     words.
     %br
     %br
-    = f.input :description, :input_html => {:rows => 5, :class=> "span11"}, :hint => "This will only be shown to organizers, not to attendees."
+    = f.input :description, input_html: { rows: 5 }, hint: 'This will only be shown to organizers, not to attendees.'
 
   %section#information
   - if current_user.name.blank? || current_user.biography.blank?
-    = f.inputs :name => "Your Information" do
+    = f.inputs :name => 'Your Information' do
       = semantic_fields_for current_user do |u|
         - if current_user.name.blank?
-          = u.input :name, :as => :string, :required => true
+          = u.input :name, as: :string, required: true
         - if current_user.biography.blank?
-          = u.input :biography, :required => true, :input_html => {:rows => 5, :class => 'span11', "onkeyup" => "word_count(this, 'biography-count', 150)"}
+          = u.input :biography, required: true, input_html: {rows: 5, 'onkeyup' => "word_count(this, 'biography-count', 150)"}
           You have used
           %span#biography-count #{current_user.biography_word_count}
           words.  Biographies are limited to 150 words.
   %p.text-right
-    = f.action :submit, :as => :button, :button_html => {:class => "btn btn-success"}
+    = f.action :submit, as: :button, button_html: { class: 'btn btn-success' }
