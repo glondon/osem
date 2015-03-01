@@ -6,8 +6,8 @@
         = "(#{@registrations.length})" if @registrations
         .btn-group.pull-right
           - if can? :read, Registration
-            = link_to "Export PDF", admin_conference_registrations_path(@conference.short_title, :format => :pdf), :class => "btn btn-default"
-            = link_to "Export XLS", {:format => :xlsx}, :class => "btn btn-default"
+            = link_to "Export PDF", admin_conference_registrations_path(@conference.short_title, format: :pdf), class: 'btn btn-success'
+            = link_to "Export XLS", {format: :xlsx}, class: 'btn btn-success'
       %p.text-muted
         All the people who registered to your event
     %table.table.table-hover.datatable#registrations
@@ -32,12 +32,12 @@
               = registration.email
             %td
               - if registration.arrival
-                = registration.arrival.strftime("%d %b %H:%M")
+                = registration.arrival.strftime('%d %b %H:%M')
               - else
                 n/a
             %td
               - if registration.departure
-                = registration.departure.strftime("%d %b %H:%M")
+                = registration.departure.strftime('%d %b %H:%M')
               - else
                 n/a
             -if @conference.questions.any?
@@ -50,13 +50,13 @@
                     - btnclass = 'btn-success'
                   - else
                     - btnclass = 'btn-warning'
-                  %button{type: "button", class: "btn #{btnclass} dropdown-toggle", "data-toggle" => "dropdown", "aria-expanded" => "false"}
+                  %button{type: 'button', class: "btn #{btnclass} dropdown-toggle", 'data-toggle' => 'dropdown', 'aria-expanded' => 'false'}
                     - if registration.attended
                       Present
                     - else
                       Absent
                     %span.caret
-                  %ul.dropdown-menu{role: "menu"}
+                  %ul.dropdown-menu{role: 'menu'}
                     %li
                       = link_to "Present", present_admin_conference_registration_path(@conference.short_title, id: registration.id),
                       method: :patch

@@ -17,9 +17,9 @@ module Admin
       @registration.update_attributes(registration_params)
       if @registration.save
         redirect_to admin_conference_registrations_path(@conference.short_title),
-                    notice: 'Successfully updated registration!'
+                    notice: "Successfully updated registration for #{@registration.user.email}!"
       else
-        flash[:error] = "An error prohibited the Registration for #{@conference.title}: "\
+        flash[:error] = "An error prohibited the Registration for #{@registration.user.email}: "\
                         "#{@registration.errors.full_messages.join('. ')}."
         render :edit
       end
