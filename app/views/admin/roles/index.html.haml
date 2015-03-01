@@ -1,13 +1,17 @@
 .row
-  .col-md-12
-    %h2 Roles
+  .col-md-12.page-header
+    %h2
+      Roles
+      - if can? :create, Role.new(resource: @conference)
+        = link_to 'Add New Role',
+          new_admin_conference_role_path(@conference.short_title),
+          class: 'btn btn-primary pull-right'
+    .text-muted
+      The available roles for the conference
 
-  .col-md-6
-    %b Actionable roles
-    %br
-    - @actionables.each_with_index do |role, index|
-      = index + 1
 
+  .col-md-4
+    - @actionables.each do |role|
       %u
         = link_to role['name'],
           admin_conference_role_path(@conference.short_title, format_role(role['name']))
@@ -15,18 +19,8 @@
       .text-muted
         = role['description']
 
-  .col-md-6
-    %b Labels
-    - if can? :create, Role.new(resource: @conference)
-      = link_to 'New',
-        new_admin_conference_role_path(@conference.short_title),
-        class: 'btn btn-xs btn-primary'
-
-    .text-muted
-      Without defined permissions
-
-    - @labels.each_with_index do |role, index|
-      = index + 1
+  .col-md-4
+    - @labels.each do |role|
 
       - unless (role_record = Role.find_by(name: format_role(role), resource: @conference)).blank?
         - if can? :edit, role_record

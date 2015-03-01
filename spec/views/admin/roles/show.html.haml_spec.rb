@@ -6,6 +6,7 @@ describe 'admin/roles/show' do
   let(:organizer) { create(:user, name: 'test name', email: 'test@email.osem', role_ids: [organizer_role.id]) }
 
   before(:each) do
+    sign_in organizer
     assign :conference, conference
     assign :selection, 'organizer'
     assign :role, organizer_role
@@ -15,8 +16,8 @@ describe 'admin/roles/show' do
     render
   end
 
-  it 'renders index' do
-    expect(rendered).to include(organizer_role.name)
+  it 'renders show properly' do
+    expect(rendered).to include(organizer_role.name.capitalize)
     expect(rendered).to include('Add user:')
     expect(rendered).to include('Select user')
     expect(rendered).to have_selector('table thead th:nth-of-type(1)', text: 'ID')

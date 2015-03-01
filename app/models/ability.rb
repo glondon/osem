@@ -87,7 +87,6 @@ class Ability
     can :manage, Track, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, DifficultyLevel, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, EmailSettings, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
-    can :manage, Campaign, conference_id: conf_ids_for_organizer
     can :manage, Lodging, conference_id: conf_ids_for_organizer
     can :manage, Room, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, Sponsor, conference_id: conf_ids_for_organizer
@@ -105,20 +104,32 @@ class Ability
     can :manage, CallForPaper, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, Venue, conference_id: conf_ids_for_organizer
     can :index, Venue, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
+
     # Abilities for Role (Conference resource)
     can :index, Role
+
+    # Can manage conference roles if conference organizer
     can :manage, Role do |role|
       role.resource_type == 'Conference' && (conf_ids_for_organizer.include? role.resource_id)
     end
+
+    # Can add or remove users from role, when user has that same role for the conference
+    # Eg. If you are member of the CfP team, you can add more CfP team members (add users to the role 'CfP')
     can [ :add_user, :remove_user], Role do |role|
       role.resource_type == 'Conference' &&
       (Conference.with_role(role.name.parameterize.underscore.to_sym, user).pluck(:id).include? role.resource_id)
     end
+
+    # The user can add role for non-actionable roles, if the user has any actionable role for the conference
+    # Eg. A volunteers coordinator can marke users as volunteers, or can marke users as sponsors
+    # (But cannot remove them)
     can :add_user, Role do |role|
       role.resource_type == 'Conference' &&
       (conf_ids_for_actionable_roles.include? role.resource_id) &&
       (label_roles.include? role.name)
     end
+
+    # The user can do absolutely anything, if the user is an admin!
     can :manage, :all if user.is_admin
   end
 

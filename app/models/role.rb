@@ -1,22 +1,24 @@
 class Role < ActiveRecord::Base
   attr_accessible :name, :description, :resource
-  has_and_belongs_to_many :users
+
   belongs_to :resource, polymorphic: true
+  has_and_belongs_to_many :users
+
   before_create :set_description
 
   scopify
 
-  LABELS = {'name' => 'Attendee', 'description' => ''},
-           {'name' => 'Volunteer', 'description' => ''},
-           {'name' => 'Speaker', 'description' => ''},
-           {'name' => 'Sponsor', 'description' => ''},
-           {'name' => 'Press', 'description' => ''},
-           {'name' => 'Keynote Speaker', 'description' => ''}
+  LABELS = {'name' => 'Attendee', 'description' => 'For the attendees of the conference'},
+           {'name' => 'Volunteer', 'description' => 'For the volunteers of the conference'},
+           {'name' => 'Speaker', 'description' => 'For the speaker of the conference'},
+           {'name' => 'Sponsor', 'description' => 'For the sponsor of the conference'},
+           {'name' => 'Press', 'description' => 'For the press personnel at the conference'},
+           {'name' => 'Keynote Speaker', 'description' => 'For the keynote speakers of the conference'}
 
-  ACTIONABLES = {'name' => 'Organizer', 'description' => 'The organizer of the conference - has full access'},
-                {'name' => 'CfP', 'description' => 'Members of the CfP team'},
-                {'name' => 'Info Desk', 'description' => 'Members of the Info Desk team'},
-                {'name' => 'Volunteers Coordinator', 'description' => 'In charge of volunteers'}
+  ACTIONABLES = {'name' => 'Organizer', 'description' => 'For the organizers of the conference (who shall have full access)'},
+                {'name' => 'CfP', 'description' => 'For the members of the CfP team'},
+                {'name' => 'Info Desk', 'description' => 'For the members of the Info Desk team'},
+                {'name' => 'Volunteers Coordinator', 'description' => 'For the people in charge of volunteers'}
 
   validates :name, presence: true
 

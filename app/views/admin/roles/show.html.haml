@@ -4,19 +4,20 @@
     Role
     = @selection.humanize.titleize
 
-.row
-  .col-md-12
-    .form-inline
-      = semantic_form_for :role, url: add_user_admin_conference_role_path(@conference.short_title, @selection), method: :patch, remote: true do |f|
+- if can? :add_user, Role.new(name: @selection, resource: @conference)
+  .row
+    .col-md-12
+      .form-inline
+        = semantic_form_for :role, url: add_user_admin_conference_role_path(@conference.short_title, @selection), method: :patch, remote: true do |f|
 
-        = f.label "Add user:"
-        %br
-        .input-group
-          = f.fields_for :user do |u|
-            = u.input :id, collection: User.all.order(email: :asc).map { |u| [u.email, u.id] }, include_blank: 'Select user', label: false
+          = f.label "Add user:"
+          %br
+          .input-group
+            = f.fields_for :user do |u|
+              = u.input :id, collection: User.all.order(email: :asc).map { |u| [u.email, u.id] }, include_blank: 'Select user', label: false
 
-          .input-group-btn
-            = f.action :submit, as: :button, label: 'Add User', button_html: {value: 'Add', class: 'btn btn-md btn-primary'}
+            .input-group-btn
+              = f.action :submit, as: :button, label: 'Add User', button_html: {value: 'Add', class: 'btn btn-md btn-primary'}
 %br
 .row
   .col-md-12
