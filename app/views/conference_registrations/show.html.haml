@@ -97,15 +97,16 @@
               You haven't bought any tickets.
               = link_to 'Please buy some tickets to support us!', conference_tickets_path(@conference.short_title)
 
-  .row
-    .col-md-12
-      -if @registration
-        .btn-group-vertical.pull-right
-          = link_to 'Edit your Registration', edit_conference_conference_registrations_path(@conference.short_title), class: 'btn btn-success'
-          = link_to 'Unregister', conference_conference_registrations_path(@conference.short_title),
-          method: :delete, class: 'btn btn-danger btn-xs', confirm: 'Are you sure you want to unregister?'
-      - else
-        = link_to 'Register', new_conference_conference_registrations_path(@conference.short_title), class: 'btn btn-success btn-lg pull-right'
+  - unless @conference.end_date < Date.today
+    .row
+      .col-md-12
+        -if @registration
+          .btn-group-vertical.pull-right
+            = link_to 'Edit your Registration', edit_conference_conference_registrations_path(@conference.short_title), class: 'btn btn-success'
+            = link_to 'Unregister', conference_conference_registrations_path(@conference.short_title),
+            method: :delete, class: 'btn btn-danger btn-xs', confirm: 'Are you sure you want to unregister?'
+        - else
+          = link_to 'Register', new_conference_conference_registrations_path(@conference.short_title), class: 'btn btn-success btn-lg pull-right'
 
   .row
     .col-md-12
