@@ -81,7 +81,6 @@ class Ability
     can :manage, Track, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, DifficultyLevel, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, EmailSettings, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
-    can :manage, Campaign, conference_id: conf_ids_for_organizer
     can :manage, Lodging, conference_id: conf_ids_for_organizer
     can :manage, Room, conference_id: conf_ids_for_organizer + conf_ids_for_cfp
     can :manage, Sponsor, conference_id: conf_ids_for_organizer
