@@ -8,7 +8,7 @@ $(function () {
       var model = $(this).attr('model');
       var attribute = $(this).attr('attribute');
 
-      url = '/admin/conference/' + this.name + '/' + model + '/' + this.value + '?event[' + attribute + ']=' + state
+      url = '/admin/conference/' + this.name + '/' + model + 's/' + this.value + '?' + model + '[' + attribute + ']=' + state
 
       $.ajax({
         url: url,

@@ -76,14 +76,14 @@
               Unknown speaker
 
           %td{'data-order' => "#{event.require_registration}"}
-            = check_box_tag @conference.short_title, event.id, event.require_registration, model: 'events', attribute: 'require_registration', class: 'switch-checkbox',
+            = check_box_tag @conference.short_title, event.id, event.require_registration, model: 'event', attribute: 'require_registration', class: 'switch-checkbox',
             data: { size: 'small',
                     off_color: 'warning',
                     on_text: 'Yes',
                     off_text: 'No' }
 
           %td{'data-order' => "#{event.is_highlight}"}
-            = check_box_tag @conference.short_title, event.id, event.is_highlight, model: 'events', attribute: 'is_highlight', class: 'switch-checkbox',
+            = check_box_tag @conference.short_title, event.id, event.is_highlight, model: 'event', attribute: 'is_highlight', class: 'switch-checkbox',
             data: { size: 'small',
                     off_color: 'warning',
                     on_text: 'Yes',

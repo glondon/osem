@@ -83,6 +83,8 @@ Osem::Application.routes.draw do
         end
         resource :speaker, only: [:edit, :update]
       end
+
+      resources :ticket_purchases, only: [:update]
     end
   end
 

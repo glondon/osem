@@ -18,8 +18,15 @@ class Ticket < ActiveRecord::Base
     buyers.include?(user)
   end
 
+  # Check if user paid the ticket
+  #
+  # ====Args
+  # * +user+ -> The user we check for
+  # ====Returns
+  # * +true+ if the ticket is paid by the user
+  # * +false+ if the ticket is not paid by the user
   def paid?(user)
-    ticket_purchases.where(user_id: user.id, paid: false).count == 0
+    ticket_purchases.find_by(user_id: user.id).paid
   end
 
   def quantity_bought_by(user)

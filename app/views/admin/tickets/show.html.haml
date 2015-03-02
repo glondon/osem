@@ -16,6 +16,7 @@
         %th Name
         %th E-Mail
         %th Affiliation
+        %th.text-center Quantity
         %th Paid
       %tbody
         - @ticket.buyers.each_with_index do |buyer, index|
@@ -24,12 +25,19 @@
               = index + 1
             %td
               = buyer.name
-              %span.label.label-success
-                = buyer.ticket_purchases.find_by(ticket_id: @ticket.id).quantity
             %td
               = buyer.email
             %td
               = buyer.affiliation
-            %td
-              = @ticket.paid?(buyer)
+            %td.text-center
+              = buyer.ticket_purchases.find_by(ticket_id: @ticket.id).quantity
+
+            %td{'data-order' => "#{@ticket.paid?(buyer)}"}
+              = check_box_tag @conference.short_title, @ticket.ticket_purchases.find_by(user: buyer).id, @ticket.paid?(buyer),
+                              model: 'ticket_purchase', attribute: 'paid',
+                              class: 'switch-checkbox',
+                              data: { size: 'small',
+                                      off_color: 'warning',
+                                      on_text: 'Yes',
+                                      off_text: 'No' }
 
