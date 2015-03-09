@@ -32,11 +32,12 @@
         %td
           %b Highlight
         %td
-          = check_box_tag @conference.short_title, @event.id, @event.is_highlight, id: 'is_highlight', class: 'switch-checkbox',
-            data: { size: 'small',
-                    off_color: 'warning',
-                    on_text: 'Yes',
-                    off_text: 'No' }
+          = check_box_tag @conference.short_title, @event.id, @event.is_highlight,
+            method: :patch, url: "/admin/conference/#{@conference.short_title}/events/#{@event.id}?event[is_highlight]=",
+            class: 'switch-checkbox', data: { size: 'small',
+                                              off_color: 'warning',
+                                              on_text: 'Yes',
+                                              off_text: 'No' }
 
       %tr
         %td
@@ -87,11 +88,12 @@
         %td
           %b Requires Registration
         %td
-          = check_box_tag @conference.short_title, @event.id, @event.require_registration, id: 'require_registration', class: 'switch-checkbox',
-            data: { size: 'small',
-                    off_color: 'warning',
-                    on_text: 'Yes',
-                    off_text: 'No' }
+          = check_box_tag @conference.short_title, @event.id, @event.require_registration,
+            method: :patch, url: "/admin/conference/#{@conference.short_title}/events/#{@event.id}?event[require_registration]=",
+            class: 'switch-checkbox', data: { size: 'small',
+                                              off_color: 'warning',
+                                              on_text: 'Yes',
+                                              off_text: 'No' }
 
       - if !@event.room.nil?
         %tr
