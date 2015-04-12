@@ -129,3 +129,8 @@
       = link_to(admin_conference_roles_path(@conference.short_title)) do
         %span.fa.fa-group
         Roles
+  - if can? :index, Tag.new(resource: @conference)
+    %li{:class=> active_nav_li(admin_conference_tags_path(@conference.short_title))}
+      = link_to(admin_conference_tags_path(@conference.short_title)) do
+        %span.fa.fa-group
+        Tags

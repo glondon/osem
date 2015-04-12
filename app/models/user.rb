@@ -5,6 +5,7 @@ class UserDisabled < StandardError
 end
 
 class User < ActiveRecord::Base
+  rolify :role_cname => 'Tag'
   rolify
   include Gravtastic
   gravtastic size: 32

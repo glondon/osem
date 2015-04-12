@@ -1,0 +1,34 @@
+.row
+  .col-md-12.page-header
+    %h2
+      Tags
+      - if can? :create, Tag.new(resource: @conference)
+        = link_to 'Add New Tag',
+          new_admin_conference_tag_path(@conference.short_title),
+          class: 'btn btn-primary pull-right'
+    .text-muted
+      The available tags for the conference
+
+  .col-md-12
+    %table.table.table-bordered.table-striped.table-hover.datatable#tags
+      %thead
+        %th ID
+        %th Name
+        %th Description
+        %th Users
+        %th Actions
+      %tbody
+        - @tags.each do |tag|
+          %tr
+            %td= tag.id
+            %td= tag.name.titleize
+            %td= tag.description
+            %td
+              = tag.users.pluck(:name).first(5).join ', '
+              - if tag.users.count > 5
+                = link_to '...', admin_conference_tag_path(@conference.short_title, tag.name)
+            %td
+              .btn-group
+                = link_to 'Users', admin_conference_tag_path(@conference.short_title, tag.name), class: 'btn btn-success'
+                - if can? :edit, tag
+                  = link_to 'Edit', edit_admin_conference_tag_path(@conference.short_title, tag.name), class: 'btn btn-primary'

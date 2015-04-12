@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20141130182139) do
+ActiveRecord::Schema.define(version: 20150317100750) do
 
   create_table "ahoy_events", force: true do |t|
     t.uuid     "visit_id"
@@ -334,11 +334,11 @@ ActiveRecord::Schema.define(version: 20141130182139) do
 
   create_table "roles", force: true do |t|
     t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.string   "description"
     t.integer  "resource_id"
     t.string   "resource_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "roles", ["name", "resource_type", "resource_id"], name: "index_roles_on_name_and_resource_type_and_resource_id"
@@ -409,6 +409,31 @@ ActiveRecord::Schema.define(version: 20141130182139) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "taggings", force: true do |t|
+    t.integer  "tag_id"
+    t.integer  "taggable_id"
+    t.string   "taggable_type"
+    t.integer  "tagger_id"
+    t.string   "tagger_type"
+    t.string   "context",       limit: 128
+    t.datetime "created_at"
+  end
+
+  add_index "taggings", ["tag_id", "taggable_id", "taggable_type", "context", "tagger_id", "tagger_type"], name: "taggings_idx", unique: true
+  add_index "taggings", ["taggable_id", "taggable_type", "context"], name: "index_taggings_on_taggable_id_and_taggable_type_and_context"
+
+  create_table "tags", force: true do |t|
+    t.string   "name"
+    t.string   "description"
+    t.integer  "resource_id"
+    t.string   "resource_type"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tags", ["name", "resource_type", "resource_id"], name: "index_tags_on_name_and_resource_type_and_resource_id"
+  add_index "tags", ["name"], name: "index_tags_on_name"
 
   create_table "targets", force: true do |t|
     t.integer  "conference_id"
@@ -486,6 +511,13 @@ ActiveRecord::Schema.define(version: 20141130182139) do
   add_index "users", ["email"], name: "index_users_on_email", unique: true
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   add_index "users", ["username"], name: "index_users_on_username", unique: true
+
+  create_table "users_tags", id: false, force: true do |t|
+    t.integer "tag_id"
+    t.integer "user_id"
+  end
+
+  add_index "users_tags", ["user_id", "tag_id"], name: "index_users_tags_on_user_id_and_tag_id"
 
   create_table "vchoices", force: true do |t|
     t.integer "vday_id"

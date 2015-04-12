@@ -11,8 +11,8 @@
       - users.each do |user|
         %tr
           %td.text-right
-            = hidden_field_tag "role[user_ids][]", nil
-            = check_box_tag "role[user_ids][]", user.id, @role.users.include?(user), id: dom_id(user)
+            = hidden_field_tag "tag[user_ids][]", nil
+            = check_box_tag "tag[user_ids][]", user.id, @tag.users.include?(user), id: dom_id(user)
           %td= user.id
           %td= user.name
           %td= user.email

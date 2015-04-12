@@ -6,6 +6,7 @@ class Event < ActiveRecord::Base
                   :difficulty_level_id, :require_registration, :is_highlight
 
   acts_as_commentable
+  rolify :role_cname => 'Tag'
 
   after_create :set_week
 

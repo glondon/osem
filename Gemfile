@@ -26,7 +26,7 @@ gem 'omniauth-github'
 # as authorization framework
 gem 'cancancan'
 # to set roles
-gem 'rolify'
+gem 'rolify', '~> 4.0.0'
 
 # to show flash messages from ajax requests
 gem 'unobtrusive_flash', '>=3'

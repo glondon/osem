@@ -4,7 +4,8 @@
 class Conference < ActiveRecord::Base
   require 'uri'
   serialize :events_per_week, Hash
-  resourcify # Needed to call 'Conference.with_role' in /models/ability.rb
+  # Needed to call 'Conference.with_role' in /models/ability.rb
+  resourcify
 
   default_scope { order('start_date DESC') }
 

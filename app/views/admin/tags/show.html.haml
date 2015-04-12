@@ -3,12 +3,12 @@
   .col-md-12
     .page-header
       %h2
-        Role
-        = @role.name.titleize
-        - if can? :edit, @role
-          = link_to 'Edit', edit_admin_conference_role_path(@conference.short_title, @role.name), class: 'btn btn-primary pull-right'
+        Tag
+        = @tag.name.titleize
+        - if can? :edit, @tag
+          = link_to 'Edit', edit_admin_conference_tag_path(@conference.short_title, @tag.name), class: 'btn btn-primary pull-right'
       .text-muted
-        = @role.description
+        = @tag.description
 
     %h3 Users (#{@users.length})
     - if @users.present?
@@ -25,3 +25,4 @@
               %td= user.email
     - else
       %h5 No users found!
+

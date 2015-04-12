@@ -52,9 +52,16 @@ Osem::Application.routes.draw do
       resources :emails, only: [:show, :update, :index]
       resources :roles do
         member do
-          patch :add_user
+          get :add_user
+          post :find_user
           patch :remove_user
         end
+      end
+
+      resources :tags do
+	member do
+	  post :find_user
+	end
       end
 
       resources :sponsorship_levels, except: [:show] do

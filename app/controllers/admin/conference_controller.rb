@@ -66,11 +66,16 @@ module Admin
 
       if @conference.valid?
         @conference.save
+        flash[:notice] = 'Conference was successfully created.'
+
         # user that creates the conference becomes organizer of that conference
-        current_user.add_role :organizer, @conference
-        redirect_to(admin_conference_path(id: @conference.short_title),
-                    notice: 'Conference was successfully created.')
+        unless create_roles_and_tags && ( current_user.add_role :organizer, @conference )
+         flash[:alert] = 'Could not create roles properly!'
+        end
+
+        redirect_to admin_conference_path(id: @conference.short_title)
       else
+        flash[:error] = 'Could not create conference. ' + @conference.errors.full_messages.to_sentence
         render action: 'new'
       end
     end
@@ -166,6 +171,22 @@ module Admin
         format.html
         format.json { render json: @conference.to_json }
       end
+    end
+
+    def create_roles_and_tags
+      # Create Roles for conference
+      Role.where(name: 'organizer', resource: @conference).first_or_create(description: 'For the organizers of the conference (who shall have full access)')
+      Role.where(name: 'cfp', resource: @conference).first_or_create(description: 'For the members of the CfP team')
+      Role.where(name: 'info_desk', resource: @conference).first_or_create(description: 'For the members of the Info Desk team')
+      Role.where(name: 'volunteers_coordinator', resource: @conference).first_or_create(description: 'For the people in charge of volunteers')
+
+      # Create Tags for conference
+      Tag.where(name: 'volunteer', resource: @conference).first_or_create!(description: 'For the volunteers of the conference')
+      Tag.where(name: 'attendee', resource: @conference).first_or_create!(description: 'For the attendees of the conference')
+      Tag.where(name: 'speaker', resource: @conference).first_or_create!(description: 'For the speakers of the conference')
+      Tag.where(name: 'sponsor',resource: @conference).first_or_create!(description: 'For the sponsors of the conference')
+      Tag.where(name: 'press', resource: @conference).first_or_create!(description: 'For the PRESS personnel covering the conference')
+      Tag.where(name: 'keynote_speaker', resource: @conference).first_or_create!(description: 'For the keynote speakers of the conference')
     end
   end
 end
