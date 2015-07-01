@@ -49,22 +49,3 @@
                 = javascript_tag "$('label[voted=true]').prevAll().andSelf().addClass('bright');"
               - else
                 = label_tag "label#{counter+1}", "", :class => "othersrating"
-:javascript
-  $(function () {
-    var checkedId = $("a[voted='true']").attr('id');
-    $('a[id=' + checkedId + ']').prevAll().andSelf().addClass('bright');
-  });
-
-  $(".myrating").hover(
-    function() {    // mouseover
-        $(this).prevAll().andSelf().addClass('glow');
-    },
-    function() {  // mouseout
-        $(this).siblings().andSelf().removeClass('glow');
-    }
-  );
-
-  $(".myrating").click(function() {
-    $(this).siblings().removeClass("bright");
-    $(this).prevAll().andSelf().addClass("bright");
-  });
