@@ -25,19 +25,22 @@
           %span.fa.fa-times
   .panel-body
     - if survey_question.boolean?
-      %input{ type: 'radio', name: "survey_submission[#{survey_question.id}][]", value: 'Yes', checked: survey_reply.text == 'Yes' }
-      Yes
+      %label
+        %input{ type: 'radio', name: "survey_submission[#{survey_question.id}][]", value: 'Yes', checked: survey_reply.text == 'Yes' }
+        Yes
       %br
-      %input{ type: 'radio', name: "survey_submission[#{survey_question.id}][]", value: 'No', checked: survey_reply.text == 'No' }
-      No
+      %label
+        %input{ type: 'radio', name: "survey_submission[#{survey_question.id}][]", value: 'No', checked: survey_reply.text == 'No' }
+        No
 
     - elsif survey_question.choice?
       - possible_answers = survey_question.possible_answers.split(',').map(&:strip)
 
       - possible_answers.each.with_index(1) do |answer, answer_index|
         - if survey_question.single_choice?
-          %input{ type: 'radio', name: "survey_submission[#{survey_question.id}][]", value: answer, checked: (survey_reply.text.include? answer if survey_reply.text) }
-          = label_tag answer
+          %label
+            %input{ type: 'radio', name: "survey_submission[#{survey_question.id}][]", value: answer, checked: (survey_reply.text.include? answer if survey_reply.text) }
+            = answer
           %br
         - else
           %label
