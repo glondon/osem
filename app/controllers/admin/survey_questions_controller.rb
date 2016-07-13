@@ -4,12 +4,6 @@ module Admin
     load_and_authorize_resource :survey, through: :conference
     load_and_authorize_resource through: :survey
 
-    def index
-    end
-
-    def show
-    end
-
     def new
       @survey_question = @survey.survey_questions.new(min_choices: 1, max_choices: 1)
       @url = admin_conference_survey_survey_questions_path(@conference.short_title, @survey)

@@ -2,15 +2,6 @@ class SurveysController < ApplicationController
   load_resource :conference, find_by: :short_title
   load_and_authorize_resource
 
-  def edit
-  end
-
-  def update
-  end
-
-  def new
-  end
-
   def show
     @survey_submission = @survey.survey_submissions.new
   end

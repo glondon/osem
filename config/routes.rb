@@ -22,7 +22,7 @@ Osem::Application.routes.draw do
     resources :comments, only: [:index]
     resources :conference do
       resources :surveys do
-        resources :survey_questions
+        resources :survey_questions, except: :index
       end
       resource :contact, except: [:index, :new, :create, :show, :destroy]
       resource :schedule, only: [:show, :update]
@@ -97,7 +97,6 @@ Osem::Application.routes.draw do
 
   resources :conference, only: [:index, :show] do
     resources :surveys, only: [:show] do
-      resource :survey_submission
       member do
         post :reply
       end
