@@ -15,7 +15,9 @@ module Admin
     def create
       @survey = Survey.new(survey_params)
       if @survey.save
-        redirect_to new_admin_conference_survey_survey_question_path(@conference.short_title, @survey)
+        redirect_to new_admin_conference_survey_survey_question_path(@conference.short_title, @survey), notice: 'Successfully created survey'
+      else
+        redirect_to new_admin_conference_survey_survey_question_path(@conference.short_title, @survey), error: 'Could not create survey.' + @survey.errors.full_messates.to_sentence
       end
     end
 

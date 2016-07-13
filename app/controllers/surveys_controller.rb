@@ -11,9 +11,6 @@ class SurveysController < ApplicationController
   def new
   end
 
-  def update
-  end
-
   def show
     @survey_submission = @survey.survey_submissions.new
   end
@@ -24,13 +21,12 @@ class SurveysController < ApplicationController
     @survey.survey_questions.each do |survey_question|
       reply = survey_question.survey_replies.find_by(user: current_user)
       if reply
-        reply.update_attributes(text: survey_submission["#{survey_question.id}"].join(','))
+        reply.update_attributes(text: survey_submission[survey_question.id.to_s].join(','))
       else
-        survey_question.survey_replies.create!(text: survey_submission["#{survey_question.id}"].join(','), user: current_user)
+        survey_question.survey_replies.create!(text: survey_submission[survey_question.id.to_s].join(','), user: current_user)
       end
     end
 
     redirect_to :back
   end
-
 end
