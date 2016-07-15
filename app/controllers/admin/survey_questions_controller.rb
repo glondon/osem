@@ -10,9 +10,11 @@ module Admin
     end
 
     def create
-      if @survey.survey_questions.create(survey_question_params)
+      @survey_question = @survey.survey_questions.new(survey_question_params)
+      if @survey_question.save
         redirect_to admin_conference_survey_path(@conference.short_title, @survey), notice: 'Successfully created Survey Question.'
       else
+        @url = admin_conference_survey_survey_questions_path(@conference.short_title, @survey)
         render :new
       end
     end
