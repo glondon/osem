@@ -25,6 +25,7 @@
           %span.fa.fa-times
   .panel-body
     - if survey_question.boolean?
+      %input{ type: 'hidden', name: "survey_submission[#{survey_question.id}][]" }
       %label
         %input{ type: 'radio', name: "survey_submission[#{survey_question.id}][]", value: 'Yes', checked: survey_reply.text == 'Yes' }
         Yes
@@ -34,6 +35,7 @@
         No
 
     - elsif survey_question.choice?
+      %input{ type: 'hidden', name: "survey_submission[#{survey_question.id}][]" }
       - possible_answers = survey_question.possible_answers.split(',').map(&:strip)
 
       - possible_answers.each.with_index(1) do |answer, answer_index|
@@ -43,7 +45,6 @@
             = answer
           %br
         - else
-          %input{ type: 'hidden', name: "survey_submission[#{survey_question.id}][]" }
           %label
             = check_box_tag "survey_submission[#{survey_question.id}][]", answer,  (survey_reply.text.include? answer if survey_reply.text), id: dom_id(survey_reply)
             = answer
