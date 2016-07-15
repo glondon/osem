@@ -43,6 +43,7 @@
             = answer
           %br
         - else
+          %input{ type: 'hidden', name: "survey_submission[#{survey_question.id}][]" }
           %label
             = check_box_tag "survey_submission[#{survey_question.id}][]", answer,  (survey_reply.text.include? answer if survey_reply.text), id: dom_id(survey_reply)
             = answer
