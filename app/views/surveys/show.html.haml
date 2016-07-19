@@ -19,4 +19,6 @@
           .col-md-10.col-md-offset-1
             - survey_reply = survey_question.survey_replies.find_by(user: current_user) || SurveyReply.new(survey_question_id: survey_question.id, user_id: current_user.id)
             = render partial: 'admin/surveys/survey_question', locals:  { survey_question: survey_question, question_index: question_index, survey_reply: survey_reply }
-      = f.submit 'Submit', class: 'btn btn-primary pull-right'
+      .row
+        .col-md-10.col-md-offset-1
+          = f.submit 'Submit', class: 'btn btn-primary pull-right'

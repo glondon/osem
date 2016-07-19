@@ -11,10 +11,12 @@ class SurveysController < ApplicationController
 
     @survey.survey_questions.each do |survey_question|
       reply = survey_question.survey_replies.find_by(user: current_user)
-      if reply
-        reply.update_attributes(text: survey_submission[survey_question.id.to_s].join(','))
+      reply_text = survey_submission[survey_question.id.to_s].reject(&:blank?).join(',')
+
+      if reply && reply.text != reply_text
+        reply.update_attributes(text: reply_text)
       else
-        survey_question.survey_replies.create!(text: survey_submission[survey_question.id.to_s].join(','), user: current_user)
+        survey_question.survey_replies.create!(text: reply_text, user: current_user)
       end
     end
 
