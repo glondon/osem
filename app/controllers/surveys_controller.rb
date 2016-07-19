@@ -18,6 +18,7 @@ class SurveysController < ApplicationController
       else
         survey_question.survey_replies.create!(text: reply_text, user: current_user)
       end
+      @survey.survey_submissions.create!(user: current_user) unless @survey.survey_submissions.find_by(user: current_user)
     end
 
     redirect_to :back

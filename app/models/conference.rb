@@ -38,6 +38,10 @@ class Conference < ActiveRecord::Base
     def for_registration
       where(target: targets[:during_registration])
     end
+
+    def after_conference
+      where(target: targets[:after_conference])
+    end
   end
 
   accepts_nested_attributes_for :venue

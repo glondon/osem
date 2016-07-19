@@ -46,10 +46,7 @@
           Surveys
 
         %ul
-          - @conference.surveys.for_registration.each do |survey|
-            %li
-              = link_to survey.title, conference_survey_path(@conference.short_title, survey)
-
+          = render partial: 'surveys/list', locals: { surveys: @conference.surveys.for_registration, conference: @conference }
   - if @registration.events.any?
     .row
       .col-md-12
