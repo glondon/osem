@@ -13,8 +13,8 @@ class SurveysController < ApplicationController
       reply = survey_question.survey_replies.find_by(user: current_user)
       reply_text = survey_submission[survey_question.id.to_s].reject(&:blank?).join(',')
 
-      if reply && reply.text != reply_text
-        reply.update_attributes(text: reply_text)
+      if reply
+        reply.update_attributes(text: reply_text) unless reply.text == reply_text
       else
         survey_question.survey_replies.create!(text: reply_text, user: current_user)
       end
