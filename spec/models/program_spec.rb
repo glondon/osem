@@ -90,7 +90,7 @@ describe Program do
 
   describe 'voting_period?' do
     it 'retuns false when voting dates are not set' do
-      expect(program.voting_period?).to eq false
+      expect(program.voting_period?).to eq true
     end
 
     shared_examples 'voting period' do |voting_start_date, voting_end_date, returns|
